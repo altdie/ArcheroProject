@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Project.Scripts.GameFlowScripts
 {
-    public class SceneLoader 
+    public class SceneLoader // пока что хз что именно делать с этим классом. Хочу сделать класс некий единственный удобный монобех, но жду твоего коммента по нему или стоит его разбить на парочку мелких классов
     {
         private Button _startGameButton;
         private TextMeshProUGUI _logTxt;
