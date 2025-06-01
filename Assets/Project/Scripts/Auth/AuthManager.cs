@@ -1,18 +1,23 @@
 using System.Threading.Tasks;
-using TMPro;
+using Project.Scripts.GameFlowScripts;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
-namespace Project.Scripts
+namespace Project.Scripts.Auth
 {
-    public class AuthManager : MonoBehaviour
+    public class AuthManager
     {
-        [SerializeField] private TextMeshProUGUI _logTxt;
+        private readonly SceneLoader _sceneLoader;
 
-        public async void SignIn()
+        public AuthManager(SceneLoader sceneLoader)
         {
-            await SignInAnonymous();
+            _sceneLoader = sceneLoader;
+        }
+
+        public void SignIn()
+        {
+            _ = SignInAnonymous();
         }
 
         private async Task SignInAnonymous()
@@ -22,13 +27,10 @@ namespace Project.Scripts
                 await UnityServices.InitializeAsync();
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
-                print("Sign in Success");
-                print("Player Id:" + AuthenticationService.Instance.PlayerId);
-                _logTxt.text = "Player id:" + AuthenticationService.Instance.PlayerId;
+                _sceneLoader.PlayerAuth();
             }
             catch (AuthenticationException ex)
             {
-                print("Sign in failed!!");
                 Debug.LogException(ex);
             }
         }

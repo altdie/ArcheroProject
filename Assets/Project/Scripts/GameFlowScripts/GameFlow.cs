@@ -8,6 +8,7 @@ using Project.Scripts.Installers;
 using Project.Scripts.PanelSettings;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
+using Project.Scripts.SaveSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,8 +29,6 @@ namespace Project.Scripts.GameFlowScripts
         private readonly PlayerFactory _playerFactory;
         private readonly PlayerSpawnPoint _spawnPointPlayer;
         private readonly Joystick _joystick;
-        private readonly PanelModel _panelModel;
-        private readonly PanelPresenter _panelPresenter;
         private readonly EnemySpawnData[] _enemySpawnData;
         private readonly Slider _experienceSlider;
         private readonly SceneData _sceneData;
@@ -37,17 +36,16 @@ namespace Project.Scripts.GameFlowScripts
         private readonly TextMeshProUGUI _levelText;
         private readonly AdsInitializer _adsInitializer;
         private readonly InterstitialAds _interstitialAdExample;
-        private readonly RewardedAds _rewardedAds;
         private readonly TimeService _timeService;
         private readonly SaveSelection _saveSelection;
+        private readonly PanelFactory _panelFactory;
+        private readonly DoorView _doorView;
 
         public GameFlow(
             EnemyFactory enemyFactory,
             PlayerFactory playerFactory,
             PlayerSpawnPoint spawnPointPlayer,
             Joystick joystick,
-            PanelModel panelModel,
-            PanelPresenter panelPresenter,
             EnemySpawnData[] enemySpawnData,
             Slider experienceSlider,
             SceneData sceneData,
@@ -55,16 +53,15 @@ namespace Project.Scripts.GameFlowScripts
             TextMeshProUGUI textMeshProUGUI,
             AdsInitializer adsInitializer,
             InterstitialAds interstitialAdExample,
-            RewardedAds rewardedAds,
             TimeService timeService,
-            SaveSelection saveSelection)
+            SaveSelection saveSelection,
+            PanelFactory panelFactory,
+            DoorView doorView)
         {
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
             _spawnPointPlayer = spawnPointPlayer;
             _joystick = joystick;
-            _panelModel = panelModel;
-            _panelPresenter = panelPresenter;
             _enemySpawnData = enemySpawnData;
             _experienceSlider = experienceSlider;
             _sceneData = sceneData;
@@ -72,20 +69,26 @@ namespace Project.Scripts.GameFlowScripts
             _levelText = textMeshProUGUI;
             _adsInitializer = adsInitializer;
             _interstitialAdExample = interstitialAdExample;
-            _rewardedAds = rewardedAds;
             _timeService = timeService;
             _saveSelection = saveSelection;
+            _panelFactory = panelFactory;
+            _doorView = doorView;
         }
 
         public void Initialize()
         {
-            _panelModel.DisablePanels();
             _ = InitializeAsync();
             _adsInitializer.InitializeAds();
             _interstitialAdExample.Initialize();
-            _panelPresenter.OnRewardedAdClicked += RevivePlayer;
-            _rewardedAds.OnAdWatched += RevivePlayer;
+            _timeService.OnPause += HandleOnPause;
+            _timeService.OnResume += HandleOnResume;
             _rewardAdsComplete = false;
+            _doorView.Disable();
+        }
+
+        public void ShowRewardedAdCallback()
+        {
+           //ShowRewardedAd(RevivePlayer);
         }
 
         private async Task InitializeAsync()
@@ -134,39 +137,36 @@ namespace Project.Scripts.GameFlowScripts
 
         private void OnAllEnemiesDefeated()
         {
-            _panelModel.EnableCollider();
+            _doorView.Enable();
             LevelUp();
         }
 
         private void RemovePlayer()
         {
             _player.PlayerHealth.OnEntityDeath -= RemovePlayer;
-            _timeService.Pause();
+            _timeService.PauseAttack();
 
             if (!_rewardAdsComplete)
             {
-                _ = _panelModel.CreatePanelAsync();
+                _ = _panelFactory.CreatePanelAsync();
             }
             else
             {
-                _ = _panelModel.CreatePanelAsync();
-                _ =_saveSelection.ClearAsync();
+                _ = _panelFactory.CreatePanelAsync();
+                _ = _saveSelection.ClearAsync();
                 _ = LoadPlayerDataAsync();
                 UpdateExperienceSlider();
                 LogDeathAnalytics();
             }
         }
 
-        private async void RevivePlayer()
+        public async void RevivePlayer()
         {
-            _panelPresenter.OnRewardedAdClicked -= RevivePlayer;
             _rewardAdsComplete = true;
 
-            _panelModel.DisablePanels();
             _player = await _playerFactory.CreatePlayerAsync(_spawnPointPlayer, 100, _joystick);
             _player.PlayerHealth.OnEntityDeath += RemovePlayer;
-            _timeService.SetPlayerModel(_player);
-            _timeService.Continue();
+            _timeService.ResumeAttack();
         }
 
         private void UpdateExperienceSlider()
@@ -199,7 +199,32 @@ namespace Project.Scripts.GameFlowScripts
             foreach (var enemy in _enemies)
             {
                 enemy.EnemyHealth.OnEntityDeath += GetEnemyDeathHandler(enemy);
-                _timeService.SetPEnemyModel(enemy);
+            }
+        }
+
+        private void HandleOnPause()
+        {
+            _player?.PauseAttack();
+
+            foreach (var enemy in _enemies)
+            {
+                if (enemy is IPausable pausableEnemy)
+                {
+                    pausableEnemy.PauseAttack();
+                }
+            }
+        }
+
+        private void HandleOnResume()
+        {
+            _player?.ResumeAttack();
+
+            foreach (var enemy in _enemies)
+            {
+                if (enemy is IPausable pausableEnemy)
+                {
+                    pausableEnemy.ResumeAttack();
+                }
             }
         }
 
@@ -210,8 +235,7 @@ namespace Project.Scripts.GameFlowScripts
 
         public void Dispose()
         {
-            _panelPresenter.OnRewardedAdClicked -= RevivePlayer;
-            _rewardedAds.OnAdWatched -= RevivePlayer;
+            
         }
     }
 }

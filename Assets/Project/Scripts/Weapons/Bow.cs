@@ -1,5 +1,4 @@
 using Project.Scripts.BulletModel;
-using Project.Scripts.WeaponModel;
 using UnityEngine;
 
 namespace Project.Scripts.Weapons

@@ -1,14 +1,15 @@
 using Project.Scripts.Enemies;
+using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
-using Project.Scripts.WeaponModel;
 using Project.Scripts.Weapons;
 using UnityEngine;
 
 namespace Project.Scripts.Enemy
 {
-    public class StoneEnemy : EnemyModel
+    public class StoneEnemy : EnemyModel, IPausable
     {
         private readonly MonoBehaviour _coroutineRunner;
+        private Coroutine _attackCoroutine;
 
         public StoneEnemy(EnemyStoneConfig config, SceneData coroutineRunner, Weapon<StoneCannonConfig> weapon, Health health)
             : base(config, weapon, health, config.EXP)
@@ -18,19 +19,29 @@ namespace Project.Scripts.Enemy
             StartAttack();
         }
 
-        public void StopAutoAttack()
+        private void StartAttack()
         {
-            _coroutineRunner.StopAllCoroutines();
+            if (_attackCoroutine == null)
+                _attackCoroutine = _coroutineRunner.StartCoroutine(AutoAttack());
         }
 
-        public override void StopAttack()
+        private void StopAttack()
         {
-            _coroutineRunner.StopAllCoroutines();
+            if (_attackCoroutine == null)
+                return;
+
+            _coroutineRunner.StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
         }
 
-        public override void StartAttack()
+        public override void PauseAttack()
         {
-            _coroutineRunner.StartCoroutine(AutoAttack());
+            StopAttack();
+        }
+
+        public override void ResumeAttack()
+        {
+            StartAttack();
         }
     }
 }

@@ -1,6 +1,4 @@
-using Project.Scripts.Weapons;
-
-namespace Project.Scripts.WeaponModel
+namespace Project.Scripts.Weapons
 {
     public abstract class Weapon<T> where T : WeaponConfig
     {

@@ -6,7 +6,7 @@ namespace Project.Scripts.ADS
 {
     public class RewardedAds : IUnityAdsLoadListener, IUnityAdsShowListener
     {
-        public event Action OnAdWatched;
+        private Action _onAdWatchedCallback;
         private readonly string _androidAdUnitId = "Rewarded_Android";
         private readonly string _iOSAdUnitId = "Rewarded_iOS";
         private string _adUnitId = null;
@@ -18,7 +18,6 @@ namespace Project.Scripts.ADS
 
             if (playerData.IsAdsRemoved)
             {
-                OnAdWatched?.Invoke();
                 return;
             }
 
@@ -27,7 +26,7 @@ namespace Project.Scripts.ADS
             Advertisement.Load(_adUnitId, this);
         }
 
-        public void ShowAd()
+        public void ShowAd(Action onAdWatchedCallback)
         {
             var saveSystem = new PlayerPrefsSave();
             var playerData = saveSystem.Load();
@@ -37,6 +36,8 @@ namespace Project.Scripts.ADS
                 return;
             }
 
+            _onAdWatchedCallback += onAdWatchedCallback;
+
             Advertisement.Show(_adUnitId, this);
         }
 
@@ -44,7 +45,8 @@ namespace Project.Scripts.ADS
         {
             if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
             {
-                OnAdWatched?.Invoke();
+                _onAdWatchedCallback?.Invoke();
+                _onAdWatchedCallback = null;
 
                 OnDestroy();
             }

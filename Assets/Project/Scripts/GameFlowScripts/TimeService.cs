@@ -1,36 +1,20 @@
-﻿using System.Collections.Generic;
-using Project.Scripts.Enemies;
-using Project.Scripts.PlayerModels;
+﻿using System;
 
 namespace Project.Scripts.GameFlowScripts
 {
-    public class TimeService
+    public class TimeService : IPausable
     {
-        private PlayerModel _playerModel;
-        private readonly List<EnemyModel> _enemyModels = new();
+        public event Action OnPause;
+        public event Action OnResume;
 
-        public void SetPlayerModel(PlayerModel playerModel)
+        public void PauseAttack()
         {
-            _playerModel = playerModel;
+            OnPause?.Invoke();
         }
 
-        public void SetPEnemyModel(EnemyModel enemyModel)
+        public void ResumeAttack()
         {
-            if (!_enemyModels.Contains(enemyModel))
-                _enemyModels.Add(enemyModel);
-        }
-
-        public void Pause()
-        {
-            foreach (var enemy in _enemyModels)
-                enemy.StopAttack();
-        }
-
-        public void Continue()
-        {
-            _playerModel.StartAttack();
-            foreach (var enemy in _enemyModels)
-                enemy.StartAttack();
+            OnResume?.Invoke();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Project.Scripts.BulletFactoryEnemy;
-using Project.Scripts.WeaponModel;
 using UnityEngine;
 
 namespace Project.Scripts.Weapons

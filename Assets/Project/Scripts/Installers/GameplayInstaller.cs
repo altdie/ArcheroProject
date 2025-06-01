@@ -8,6 +8,7 @@ using Project.Scripts.Firebase;
 using Project.Scripts.GameFlowScripts;
 using Project.Scripts.PanelSettings;
 using Project.Scripts.Players;
+using Project.Scripts.SaveSystem;
 using Project.Scripts.Weapons;
 using TMPro;
 using UnityEngine;
@@ -29,7 +30,6 @@ namespace Project.Scripts.Installers
         [SerializeField] private Collider _levelCollider;
         [SerializeField] private PanelView _panelGameOver;
         [SerializeField] private Canvas _panelCanvas;
-        [SerializeField] private SceneLoader _sceneLoader;
 
         public override void InstallBindings()
         {
@@ -45,6 +45,7 @@ namespace Project.Scripts.Installers
         {
             Container.Bind<WeaponFactory>().AsSingle();
             Container.Bind<PlayerFactory>().AsSingle();
+            Container.Bind<PanelFactory>().AsSingle();
             Container.Bind<EnemyFactory>().AsSingle().WithArguments(_sceneData);
             Container.Bind<BulletFactoryEnemies>().AsSingle().WithArguments(_stoneCannonConfig);
             Container.Bind<BulletFactoryPlayer>().AsSingle().WithArguments(_bowConfig);
@@ -70,23 +71,14 @@ namespace Project.Scripts.Installers
             Container.Bind<InterstitialAds>().AsSingle();
             Container.Bind<RewardedAds>().AsSingle();
             Container.Bind<IAds>().To<AdsService>().AsSingle();
-            Container.Bind<PanelPresenter>().AsSingle();
             Container.BindInstance(_slider).AsSingle();
             Container.BindInstance(_levelText).AsSingle();
-            Container.BindInstance(_panelCanvas);
-            Container.BindInstance(_levelCollider);
-            Container.BindInstance(_sceneLoader);
+            Container.BindInstance(_panelCanvas).AsSingle();
+            Container.BindInstance(_levelCollider).AsSingle();
             Container.Bind<PanelView>()
                .FromComponentInNewPrefab(_panelGameOver)
                .AsSingle()
                .NonLazy();
-            Container.Bind<PanelModel>().AsSingle()
-                .WithArguments(
-                    _levelCollider,
-                    _panelGameOver,
-                    _panelCanvas,
-                    _sceneLoader
-                );
         }
 
         private void BindServices()
@@ -103,6 +95,8 @@ namespace Project.Scripts.Installers
         private void BindGameLogic()
         {
             Container.BindInterfacesAndSelfTo<GameFlow>().AsSingle();
+            Container.Bind<DoorView>().AsSingle().WithArguments(_levelCollider);
+            Container.Bind<SceneLoader>().AsSingle();
         }
     }
 }

@@ -1,14 +1,24 @@
+using TMPro;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Project.Scripts.GameFlowScripts
 {
-    public class SceneLoader : MonoBehaviour
+    public class SceneLoader 
     {
-        [SerializeField] private Button _startGameButton;
+        private Button _startGameButton;
+        private TextMeshProUGUI _logTxt;
 
-        private void OnTriggerEnter(Collider other)
+        public SceneLoader(Button startGameButton, TextMeshProUGUI logTxt)
+        {
+            _startGameButton = startGameButton;
+            _logTxt = logTxt;
+            _startGameButton.onClick.AddListener(StartGame);
+        }
+
+        private void OnTriggerEnter(Collider other) // тут я не очень понимаю, мне нужно сделать монобех который будет контрлировать такое? Или можно как то другим способом?
         {
             ReloadScene();
         }
@@ -23,6 +33,11 @@ namespace Project.Scripts.GameFlowScripts
         public void StartGame()
         {
             SceneManager.LoadScene("StartSceneTest");
+        }
+
+        public void PlayerAuth()
+        {
+            _logTxt.text = "Player id:" + AuthenticationService.Instance.PlayerId;
         }
     }
 }

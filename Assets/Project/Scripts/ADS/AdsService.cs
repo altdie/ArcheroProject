@@ -1,8 +1,9 @@
+using System;
 using Assets.Project.Scripts.ADS;
 
 namespace Project.Scripts.ADS
 {
-    public class AdsService : IAds
+    public class AdsService : IAds // простой класс, бесполезный интерфейс который я не понимаю как использовать. Класс так же не поинмаю как использовать
     {
         private readonly RewardedAds _rewardedAds;
         private readonly InterstitialAds _interstitialAds;
@@ -16,9 +17,9 @@ namespace Project.Scripts.ADS
             _interstitialAds.Initialize();
         }
 
-        public void ShowRewardedAd()
+        public void ShowRewardedAd(Action reward)
         {
-            _rewardedAds.ShowAd();
+            _rewardedAds.ShowAd(reward);
         }
 
         public void ShowInterstitialAd()

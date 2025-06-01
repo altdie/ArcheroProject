@@ -1,47 +1,47 @@
 using System.Threading.Tasks;
-using Project.Scripts;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
 using Unity.Services.Core;
 
-public class SaveSelection
+namespace Project.Scripts.SaveSystem
 {
-    private readonly CloudSave _cloudSave;
-    private readonly PlayerPrefsSave _localSave;
-
-
-
-    public SaveSelection(PlayerPrefsSave localSave, CloudSave cloudSave)
+    public class SaveSelection
     {
-        _localSave = localSave;
-        _cloudSave = cloudSave;
-        InitializeUnityServices();
-    }
-    private async void InitializeUnityServices()
-    {
-        await UnityServices.InitializeAsync();
-    }
+        private readonly CloudSave _cloudSave;
+        private readonly PlayerPrefsSave _localSave;
 
-    public async Task SaveAsync(PlayerModel data)
-    {
-        await _cloudSave.SaveToCloud(data);
-        _localSave.Save(data);
-    }
+        public SaveSelection(PlayerPrefsSave localSave, CloudSave cloudSave)
+        {
+            _localSave = localSave;
+            _cloudSave = cloudSave;
+            InitializeUnityServices();
+        }
+        private async void InitializeUnityServices()
+        {
+            await UnityServices.InitializeAsync();
+        }
 
-    public async Task<PlayerDataSave> LoadAsync()
-    {
-        var localData = _localSave.Load();
-        var cloudData = await _cloudSave.LoadFromCloud();
+        public async Task SaveAsync(PlayerModel data)
+        {
+            await _cloudSave.SaveToCloud(data);
+            _localSave.Save(data);
+        }
 
-        if (cloudData.LastSaved > localData.LastSaved)
-            return cloudData;
+        public async Task<PlayerDataSave> LoadAsync()
+        {
+            var localData = _localSave.Load();
+            var cloudData = await _cloudSave.LoadFromCloud();
 
-        return localData;
-    }
+            if (cloudData.LastSaved > localData.LastSaved)
+                return cloudData;
 
-    public async Task ClearAsync()
-    {
-        await _cloudSave.ClearCloudSave();
-        _localSave.Clear();
+            return localData;
+        }
+
+        public async Task ClearAsync()
+        {
+            await _cloudSave.ClearCloudSave();
+            _localSave.Clear();
+        }
     }
 }

@@ -1,12 +1,12 @@
 using System.Collections;
+using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
-using Project.Scripts.WeaponModel;
 using Project.Scripts.Weapons;
 using UnityEngine;
 
 namespace Project.Scripts.Enemies
 {
-    public class EnemyModel
+    public class EnemyModel : IPausable
     {
         public int EXP { get; private set; }
         private Weapon<StoneCannonConfig> CurrentWeapon { get; set; }
@@ -33,8 +33,14 @@ namespace Project.Scripts.Enemies
             }
         }
 
-        public virtual void StopAttack() { }
+        public virtual void PauseAttack()
+        {
+            // по умолчанию ничего не делаем
+        }
 
-        public virtual void StartAttack() { }
+        public virtual void ResumeAttack()
+        {
+            // по умолчанию ничего не делаем
+        }
     }
 }

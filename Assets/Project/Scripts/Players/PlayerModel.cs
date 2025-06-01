@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
+using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
 using Project.Scripts.Players;
-using Project.Scripts.WeaponModel;
 using Project.Scripts.Weapons;
 
 namespace Project.Scripts.PlayerModels
 {
-    public class PlayerModel
+    public class PlayerModel : IPausable
     {
         private const int ATTACK_DELAY = 250;
 
@@ -63,6 +63,16 @@ namespace Project.Scripts.PlayerModels
         public void SetWeapon(Weapon<BowConfig> weapon)
         {
             CurrentWeapon = weapon;
+        }
+
+        public void PauseAttack()
+        {
+            StopAttacking();
+        }
+
+        public void ResumeAttack()
+        {
+            StartAttack();
         }
     }
 }
