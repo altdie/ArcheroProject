@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Project.Scripts.ADS;
 using Project.Scripts.Enemies;
 using Project.Scripts.Firebase;
@@ -9,17 +10,14 @@ using Project.Scripts.PanelSettings;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
 using Project.Scripts.SaveSystem;
-using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
+using Project.Scripts.UI;
 using Zenject;
 
 namespace Project.Scripts.GameFlowScripts
 {
-    public class GameFlow : IInitializable, ITickable, IDisposable
+    public class GameFlow : IInitializable, IDisposable
     {
         private int _killsCount;
-        private int _levelCount;
         private bool _rewardAdsComplete = false;
 
         private List<EnemyModel> _enemies;
@@ -30,16 +28,19 @@ namespace Project.Scripts.GameFlowScripts
         private readonly PlayerSpawnPoint _spawnPointPlayer;
         private readonly Joystick _joystick;
         private readonly EnemySpawnData[] _enemySpawnData;
-        private readonly Slider _experienceSlider;
         private readonly SceneData _sceneData;
         private readonly IAnalyticsService _analyticsService;
-        private readonly TextMeshProUGUI _levelText;
         private readonly AdsInitializer _adsInitializer;
         private readonly InterstitialAds _interstitialAdExample;
         private readonly TimeService _timeService;
         private readonly SaveSelection _saveSelection;
         private readonly PanelFactory _panelFactory;
         private readonly DoorView _doorView;
+        private PlayerStatsUIPresenter _playerStatsUIPresenter;
+        private PlayerStatsUIModel _playerStatsUIModel;
+        private readonly PlayerStatsUIView _playerStatsUIView;
+        private CancellationTokenSource _cts;
+        private CancellationToken _token;
 
         public GameFlow(
             EnemyFactory enemyFactory,
@@ -47,41 +48,36 @@ namespace Project.Scripts.GameFlowScripts
             PlayerSpawnPoint spawnPointPlayer,
             Joystick joystick,
             EnemySpawnData[] enemySpawnData,
-            Slider experienceSlider,
             SceneData sceneData,
             IAnalyticsService analyticsService,
-            TextMeshProUGUI textMeshProUGUI,
             AdsInitializer adsInitializer,
             InterstitialAds interstitialAdExample,
             TimeService timeService,
             SaveSelection saveSelection,
             PanelFactory panelFactory,
-            DoorView doorView)
+            DoorView doorView,PlayerStatsUIView playerStatsUIView)
         {
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
             _spawnPointPlayer = spawnPointPlayer;
             _joystick = joystick;
             _enemySpawnData = enemySpawnData;
-            _experienceSlider = experienceSlider;
             _sceneData = sceneData;
             _analyticsService = analyticsService;
-            _levelText = textMeshProUGUI;
             _adsInitializer = adsInitializer;
             _interstitialAdExample = interstitialAdExample;
             _timeService = timeService;
             _saveSelection = saveSelection;
             _panelFactory = panelFactory;
             _doorView = doorView;
+            _playerStatsUIView = playerStatsUIView;
         }
 
-        public void Initialize()
+        public async void Initialize()
         {
-            _ = InitializeAsync();
+            await InitializeAsync();
             _adsInitializer.InitializeAds();
             _interstitialAdExample.Initialize();
-            _timeService.OnPause += HandleOnPause;
-            _timeService.OnResume += HandleOnResume;
             _rewardAdsComplete = false;
             _doorView.Disable();
         }
@@ -91,34 +87,35 @@ namespace Project.Scripts.GameFlowScripts
            //ShowRewardedAd(RevivePlayer);
         }
 
-        private async Task InitializeAsync()
+        private async UniTask InitializeAsync()
         {
+            CreateCancellationToken();
             _player = await _playerFactory.CreatePlayerAsync(_spawnPointPlayer, 100, _joystick);
             _enemyFactory.CreateEnemies(_enemySpawnData);
             _enemies = _enemyFactory.Enemies;
-
-            _player.PlayerHealth.OnEntityDeath += RemovePlayer;
+            _playerStatsUIModel = new PlayerStatsUIModel(_player, _sceneData.MaxExperience);
+            _playerStatsUIPresenter = new PlayerStatsUIPresenter(_playerStatsUIModel, _playerStatsUIView);
+            _player.PlayerHealth.OnEntityDeath += OnPlayerDeath;
 
             SetupEnemies();
-            await LoadPlayerDataAsync();
+            await LoadPlayerDataAsync(_token);
             UpdateExperienceSlider();
         }
 
         private Action GetEnemyDeathHandler(EnemyModel enemy)
         {
-            return () => RemoveEnemy(enemy);
+            return () => _ = RemoveEnemy(enemy);
         }
 
-        private async Task LoadPlayerDataAsync()
+        private async UniTask LoadPlayerDataAsync(CancellationToken token)                               // тест
         {
             PlayerDataSave savedData = await _saveSelection.LoadAsync();
             _player.Experience = savedData.Experience;
-            _levelCount = savedData.Level;
             _player.IsAdsRemoved = savedData.IsAdsRemoved;
-            _levelText.text = "Level: " + _levelCount;
+            token.ThrowIfCancellationRequested();
         }
 
-        private async void RemoveEnemy(EnemyModel enemy)
+        private async UniTaskVoid RemoveEnemy(EnemyModel enemy)
         {
             enemy.EnemyHealth.OnEntityDeath -= GetEnemyDeathHandler(enemy);
             _enemies.Remove(enemy);
@@ -141,52 +138,57 @@ namespace Project.Scripts.GameFlowScripts
             LevelUp();
         }
 
-        private void RemovePlayer()
+        private async UniTaskVoid RemovePlayer()
         {
-            _player.PlayerHealth.OnEntityDeath -= RemovePlayer;
             _timeService.PauseAttack();
 
             if (!_rewardAdsComplete)
             {
-                _ = _panelFactory.CreatePanelAsync();
+                await _panelFactory.CreatePanelAsync(_token);
+                await ClearData(_token);
             }
             else
             {
-                _ = _panelFactory.CreatePanelAsync();
-                _ = _saveSelection.ClearAsync();
-                _ = LoadPlayerDataAsync();
+                await _panelFactory.CreatePanelAsync(_token);
+                await _saveSelection.ClearAsync(_token);
+                await LoadPlayerDataAsync(_token);
                 UpdateExperienceSlider();
                 LogDeathAnalytics();
             }
         }
 
-        public async void RevivePlayer()
+        private void OnPlayerDeath()
+        {
+            _ = RemovePlayer();
+        }
+
+
+        public async UniTask RevivePlayer()
         {
             _rewardAdsComplete = true;
 
             _player = await _playerFactory.CreatePlayerAsync(_spawnPointPlayer, 100, _joystick);
-            _player.PlayerHealth.OnEntityDeath += RemovePlayer;
+            _player.PlayerHealth.OnEntityDeath += OnPlayerDeath;
             _timeService.ResumeAttack();
         }
 
         private void UpdateExperienceSlider()
         {
-            float current = _player.Experience;
-            float max = _sceneData.MaxExperience;
-            _experienceSlider.value = Mathf.Clamp(current / max, 0f, 1f);
+            _playerStatsUIPresenter.UpdateView();
         }
 
         private void LevelUp()
         {
-            _levelCount++;
-            _analyticsService.LogLevelPassed(_levelCount);
-            _levelText.text = "Level: " + _levelCount;
+            _player.Level++;
+            _playerStatsUIPresenter.UpdateView();
+
+            _analyticsService.LogLevelPassed(_player.Level);
             _ = _saveSelection.SaveAsync(_player);
         }
 
-        public async void ClearData()
+        public async UniTask ClearData(CancellationToken token)
         {
-            await _saveSelection.ClearAsync();
+            await _saveSelection.ClearAsync(token);
         }
 
         private void LogDeathAnalytics()
@@ -202,40 +204,17 @@ namespace Project.Scripts.GameFlowScripts
             }
         }
 
-        private void HandleOnPause()
+        private void CreateCancellationToken()
         {
-            _player?.PauseAttack();
-
-            foreach (var enemy in _enemies)
-            {
-                if (enemy is IPausable pausableEnemy)
-                {
-                    pausableEnemy.PauseAttack();
-                }
-            }
-        }
-
-        private void HandleOnResume()
-        {
-            _player?.ResumeAttack();
-
-            foreach (var enemy in _enemies)
-            {
-                if (enemy is IPausable pausableEnemy)
-                {
-                    pausableEnemy.ResumeAttack();
-                }
-            }
-        }
-
-        public void Tick()
-        {
-            _player?.Move();
+            _cts = new CancellationTokenSource();
+            _token = _cts.Token;
         }
 
         public void Dispose()
         {
-            
+            _player.PlayerHealth.OnEntityDeath -= OnPlayerDeath;
+            _cts?.Cancel();
+            _cts?.Dispose();
         }
     }
 }

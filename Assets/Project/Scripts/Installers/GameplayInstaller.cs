@@ -1,4 +1,5 @@
-﻿using Assets.Project.Scripts.ADS;
+﻿using System.Collections.Generic;
+using Assets.Project.Scripts.ADS;
 using Project.Scripts.Addressables;
 using Project.Scripts.ADS;
 using Project.Scripts.BulletFactoryEnemy;
@@ -9,10 +10,9 @@ using Project.Scripts.GameFlowScripts;
 using Project.Scripts.PanelSettings;
 using Project.Scripts.Players;
 using Project.Scripts.SaveSystem;
+using Project.Scripts.UI;
 using Project.Scripts.Weapons;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Project.Scripts.Installers
@@ -25,11 +25,10 @@ namespace Project.Scripts.Installers
         [SerializeField] private StoneCannonConfig _stoneCannonConfig;
         [SerializeField] private EnemySpawnData[] _enemySpawnData;
         [SerializeField] private SceneData _sceneData;
-        [SerializeField] private Slider _slider;
-        [SerializeField] private TextMeshProUGUI _levelText;
         [SerializeField] private Collider _levelCollider;
         [SerializeField] private PanelView _panelGameOver;
         [SerializeField] private Canvas _panelCanvas;
+        [SerializeField] private PlayerStatsUIView _playerStatsUIView;
 
         public override void InstallBindings()
         {
@@ -63,6 +62,7 @@ namespace Project.Scripts.Installers
             Container.BindInstance(_joystick).AsSingle();
             Container.BindInstance(_enemySpawnData).AsSingle();
             Container.BindInstance(_sceneData).AsSingle();
+            Container.BindInstance(_playerStatsUIView).AsSingle();
         }
 
         private void BindUI()
@@ -71,14 +71,14 @@ namespace Project.Scripts.Installers
             Container.Bind<InterstitialAds>().AsSingle();
             Container.Bind<RewardedAds>().AsSingle();
             Container.Bind<IAds>().To<AdsService>().AsSingle();
-            Container.BindInstance(_slider).AsSingle();
-            Container.BindInstance(_levelText).AsSingle();
             Container.BindInstance(_panelCanvas).AsSingle();
             Container.BindInstance(_levelCollider).AsSingle();
             Container.Bind<PanelView>()
                .FromComponentInNewPrefab(_panelGameOver)
                .AsSingle()
                .NonLazy();
+            Container.Bind<PlayerStatsUIModel>().AsSingle();
+            Container.Bind<PlayerStatsUIPresenter>().AsSingle().WithArguments(_playerStatsUIView);
         }
 
         private void BindServices()
@@ -95,6 +95,7 @@ namespace Project.Scripts.Installers
         private void BindGameLogic()
         {
             Container.BindInterfacesAndSelfTo<GameFlow>().AsSingle();
+            Container.Bind<List<IPausable>>().AsSingle();
             Container.Bind<DoorView>().AsSingle().WithArguments(_levelCollider);
             Container.Bind<SceneLoader>().AsSingle();
         }

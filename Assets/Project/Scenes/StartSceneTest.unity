@@ -2980,6 +2980,7 @@ GameObject:
   - component: {fileID: 925118145566125541}
   - component: {fileID: 8715786038875783155}
   - component: {fileID: 8715786038875783156}
+  - component: {fileID: 8715786038875783157}
   m_Layer: 0
   m_Name: EntryPoint
   m_TagString: Untagged
@@ -3162,11 +3163,10 @@ MonoBehaviour:
   - SpawnPoint: {fileID: 1546596456}
     Config: {fileID: 11400000, guid: 1fac4f6510b827f44a0400c42ae51185, type: 2}
   _sceneData: {fileID: 8715786038875783156}
-  _slider: {fileID: 1011952333}
-  _levelText: {fileID: 1481866098}
   _levelCollider: {fileID: 1627011671}
   _panelGameOver: {fileID: 8862474714923275471, guid: 81e2034ecfbdf454f9d2328581f6736c, type: 3}
   _panelCanvas: {fileID: 406937205}
+  _playerStatsUIView: {fileID: 8715786038875783157}
 --- !u!114 &8715786038875783156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3184,3 +3184,17 @@ MonoBehaviour:
   - {fileID: 1546596456}
   PrefabPlayer: {fileID: 1295248305276566563, guid: 0948ddca13434fd4a83ee0956812efe1, type: 3}
   MaxExperience: 10
+--- !u!114 &8715786038875783157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412593261606618712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34a1740612dc0584290691d39c88ac71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelText: {fileID: 1481866098}
+  experienceSlider: {fileID: 1011952333}

@@ -1,4 +1,6 @@
+using System.Threading;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
 using Unity.Services.Core;
@@ -21,7 +23,7 @@ namespace Project.Scripts.SaveSystem
             await UnityServices.InitializeAsync();
         }
 
-        public async Task SaveAsync(PlayerModel data)
+        public async UniTask SaveAsync(PlayerModel data)
         {
             await _cloudSave.SaveToCloud(data);
             _localSave.Save(data);
@@ -38,9 +40,10 @@ namespace Project.Scripts.SaveSystem
             return localData;
         }
 
-        public async Task ClearAsync()
+        public async UniTask ClearAsync(CancellationToken token)
         {
             await _cloudSave.ClearCloudSave();
+            token.ThrowIfCancellationRequested();
             _localSave.Clear();
         }
     }

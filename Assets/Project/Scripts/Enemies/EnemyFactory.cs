@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Project.Scripts.HealthInfo;
 using UnityEngine;
 using Project.Scripts.Enemy;
+using Project.Scripts.GameFlowScripts;
 
 namespace Project.Scripts.Enemies
 {
@@ -10,12 +11,14 @@ namespace Project.Scripts.Enemies
     {
         private readonly WeaponFactory _weaponFactory;
         private readonly SceneData _sceneData;
+        private readonly List<IPausable> _pausables;
         public List<EnemyModel> Enemies { get; } = new();
 
-        public EnemyFactory(WeaponFactory weaponFactory, SceneData sceneData)
+        public EnemyFactory(WeaponFactory weaponFactory, SceneData sceneData, List<IPausable> pausables)
         {
             _weaponFactory = weaponFactory;
             _sceneData = sceneData;
+            _pausables = pausables;
         }
 
         public void CreateEnemies(EnemySpawnData[] enemySpawnData)
@@ -45,6 +48,9 @@ namespace Project.Scripts.Enemies
                 {
                     enemy = new EnemyModel(data.Config, enemyWeapon, enemyHealth, data.Config.EXP);
                 }
+
+                if (enemy is IPausable pausable)
+                    _pausables.Add(pausable);
 
                 enemies[i] = enemy;
                 Enemies.Add(enemy);

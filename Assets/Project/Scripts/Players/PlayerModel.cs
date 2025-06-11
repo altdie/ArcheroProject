@@ -3,10 +3,11 @@ using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
 using Project.Scripts.Players;
 using Project.Scripts.Weapons;
+using Zenject;
 
 namespace Project.Scripts.PlayerModels
 {
-    public class PlayerModel : IPausable
+    public class PlayerModel : IPausable, ITickable
     {
         private const int ATTACK_DELAY = 250;
 
@@ -33,7 +34,6 @@ namespace Project.Scripts.PlayerModels
             Level = level;
             IsAdsRemoved = isAdsRemoved;
             LastSave = lastSave;
-
         }
 
         public void Move()
@@ -73,6 +73,11 @@ namespace Project.Scripts.PlayerModels
         public void ResumeAttack()
         {
             StartAttack();
+        }
+
+        public void Tick()
+        {
+            Move();
         }
     }
 }

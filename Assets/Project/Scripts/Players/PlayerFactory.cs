@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using Project.Scripts.Addressables;
 using Project.Scripts.GameFlowScripts;
+using Zenject;
 
 namespace Project.Scripts.Players
 {
@@ -16,13 +17,15 @@ namespace Project.Scripts.Players
         private readonly SceneData _sceneData;
         private readonly IAssetProvider _assetProvider;
         private readonly PlayerPrefsSave _playerPrefsSave;
+        private DiContainer _container;
 
-        public PlayerFactory(WeaponFactory weaponFactory, SceneData sceneData, IAssetProvider assetProvider, PlayerPrefsSave playerPrefsSave)
+        public PlayerFactory(WeaponFactory weaponFactory, SceneData sceneData, IAssetProvider assetProvider, PlayerPrefsSave playerPrefsSave, DiContainer container)
         {
             _weaponFactory = weaponFactory;
             _sceneData = sceneData;
             _assetProvider = assetProvider;
             _playerPrefsSave = playerPrefsSave;
+            _container = container;
         }
 
         public async Task<PlayerModel> CreatePlayerAsync(PlayerSpawnPoint spawnPosition, int initialHealth, Joystick joystick)
@@ -38,6 +41,8 @@ namespace Project.Scripts.Players
 
             playerMovement.Initialize(player, playerInput, health, _sceneData, playerSaveData.Experience);
             player.SetWeapon(weapon);
+            _container.Inject(player);
+            _container.Resolve<TickableManager>().Add(player);
 
             return player;
         }

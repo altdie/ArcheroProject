@@ -1,20 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Project.Scripts.GameFlowScripts
 {
     public class TimeService : IPausable
     {
-        public event Action OnPause;
-        public event Action OnResume;
+        private readonly List<IPausable> _pausables;
+
+        public TimeService(List<IPausable> pausables)
+        {
+            _pausables = pausables;
+        }
 
         public void PauseAttack()
         {
-            OnPause?.Invoke();
+            foreach (var p in _pausables)
+                p.PauseAttack();
         }
 
         public void ResumeAttack()
         {
-            OnResume?.Invoke();
+            foreach (var p in _pausables)
+                p.ResumeAttack();
         }
     }
 }
