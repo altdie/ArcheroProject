@@ -36,11 +36,14 @@ namespace Project.Scripts.GameFlowScripts
         private readonly SaveSelection _saveSelection;
         private readonly PanelFactory _panelFactory;
         private readonly DoorView _doorView;
+        private readonly SceneLoader _sceneLoader;
         private PlayerStatsUIPresenter _playerStatsUIPresenter;
         private PlayerStatsUIModel _playerStatsUIModel;
         private readonly PlayerStatsUIView _playerStatsUIView;
         private CancellationTokenSource _cts;
         private CancellationToken _token;
+        private PanelPresenter _panelPresenter;
+        private readonly AdsService _adsService;
 
         public GameFlow(
             EnemyFactory enemyFactory,
@@ -55,7 +58,7 @@ namespace Project.Scripts.GameFlowScripts
             TimeService timeService,
             SaveSelection saveSelection,
             PanelFactory panelFactory,
-            DoorView doorView,PlayerStatsUIView playerStatsUIView)
+            DoorView doorView,PlayerStatsUIView playerStatsUIView, SceneLoader sceneLoader, AdsService adsService)
         {
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
@@ -71,12 +74,15 @@ namespace Project.Scripts.GameFlowScripts
             _panelFactory = panelFactory;
             _doorView = doorView;
             _playerStatsUIView = playerStatsUIView;
+            _sceneLoader = sceneLoader;
+            _adsService = adsService;
         }
 
         public async void Initialize()
         {
             await InitializeAsync();
             _adsInitializer.InitializeAds();
+            _adsService.LoadInterstitialAd();
             _interstitialAdExample.Initialize();
             _rewardAdsComplete = false;
             _doorView.Disable();
@@ -84,7 +90,7 @@ namespace Project.Scripts.GameFlowScripts
 
         public void ShowRewardedAdCallback()
         {
-           //ShowRewardedAd(RevivePlayer);
+            _adsService.ShowRewardedAd(() => RevivePlayer().Forget());
         }
 
         private async UniTask InitializeAsync()
@@ -107,7 +113,7 @@ namespace Project.Scripts.GameFlowScripts
             return () => _ = RemoveEnemy(enemy);
         }
 
-        private async UniTask LoadPlayerDataAsync(CancellationToken token)                               // тест
+        private async UniTask LoadPlayerDataAsync(CancellationToken token)
         {
             PlayerDataSave savedData = await _saveSelection.LoadAsync();
             _player.Experience = savedData.Experience;
@@ -142,14 +148,16 @@ namespace Project.Scripts.GameFlowScripts
         {
             _timeService.PauseAttack();
 
+            _adsService.ShowInterstitialAd();
+            PanelView panelView = await _panelFactory.CreatePanelAsync(_token);
+            _panelPresenter = new PanelPresenter(panelView, this, _sceneLoader);
+
             if (!_rewardAdsComplete)
             {
-                await _panelFactory.CreatePanelAsync(_token);
                 await ClearData(_token);
             }
             else
             {
-                await _panelFactory.CreatePanelAsync(_token);
                 await _saveSelection.ClearAsync(_token);
                 await LoadPlayerDataAsync(_token);
                 UpdateExperienceSlider();
@@ -162,13 +170,13 @@ namespace Project.Scripts.GameFlowScripts
             _ = RemovePlayer();
         }
 
-
         public async UniTask RevivePlayer()
         {
             _rewardAdsComplete = true;
 
             _player = await _playerFactory.CreatePlayerAsync(_spawnPointPlayer, 100, _joystick);
             _player.PlayerHealth.OnEntityDeath += OnPlayerDeath;
+            _panelFactory.DestroyPanel();
             _timeService.ResumeAttack();
         }
 

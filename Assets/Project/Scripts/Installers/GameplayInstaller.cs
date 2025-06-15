@@ -12,7 +12,10 @@ using Project.Scripts.Players;
 using Project.Scripts.SaveSystem;
 using Project.Scripts.UI;
 using Project.Scripts.Weapons;
+using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Project.Scripts.Installers
@@ -29,6 +32,8 @@ namespace Project.Scripts.Installers
         [SerializeField] private PanelView _panelGameOver;
         [SerializeField] private Canvas _panelCanvas;
         [SerializeField] private PlayerStatsUIView _playerStatsUIView;
+        [SerializeField] private TextMeshProUGUI _test;
+        [SerializeField] private Button _testButton;
 
         public override void InstallBindings()
         {
@@ -70,7 +75,7 @@ namespace Project.Scripts.Installers
             Container.Bind<AdsInitializer>().AsSingle();
             Container.Bind<InterstitialAds>().AsSingle();
             Container.Bind<RewardedAds>().AsSingle();
-            Container.Bind<IAds>().To<AdsService>().AsSingle();
+            Container.Bind<AdsService>().AsSingle();
             Container.BindInstance(_panelCanvas).AsSingle();
             Container.BindInstance(_levelCollider).AsSingle();
             Container.Bind<PanelView>()
@@ -97,7 +102,7 @@ namespace Project.Scripts.Installers
             Container.BindInterfacesAndSelfTo<GameFlow>().AsSingle();
             Container.Bind<List<IPausable>>().AsSingle();
             Container.Bind<DoorView>().AsSingle().WithArguments(_levelCollider);
-            Container.Bind<SceneLoader>().AsSingle();
+            Container.Bind<SceneLoader>().AsSingle().WithArguments(_testButton, _test);
         }
     }
 }

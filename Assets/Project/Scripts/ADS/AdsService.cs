@@ -3,7 +3,7 @@ using Assets.Project.Scripts.ADS;
 
 namespace Project.Scripts.ADS
 {
-    public class AdsService : IAds // простой класс, бесполезный интерфейс который я не понимаю как использовать. Класс так же не поинмаю как использовать
+    public class AdsService  // простой класс, бесполезный интерфейс который я не понимаю как использовать. Класс так же не поинмаю как использовать
     {
         private readonly RewardedAds _rewardedAds;
         private readonly InterstitialAds _interstitialAds;

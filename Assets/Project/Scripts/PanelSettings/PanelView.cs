@@ -28,11 +28,13 @@ namespace Project.Scripts.PanelSettings
 
         private void OnReloadGameClicked()
         {
+            Debug.Log("🔴 Нажата кнопка Reload");
             ReloadGameClicked?.Invoke();
         }
 
         private void OnRewardedAdsClicked()
         {
+            Debug.Log("🔵 Нажата кнопка Free Life");
             RewardedAdsClicked?.Invoke();
         }
     }

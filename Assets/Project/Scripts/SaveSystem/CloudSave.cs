@@ -11,14 +11,14 @@ namespace Project.Scripts
         public async Task SaveToCloud(PlayerModel data)
         {
             var saveDict = new Dictionary<string, object>
-        {
-            { "Experience", data.Experience },
-            { "Level", data.Level },
-            { "IsAdsRemoved", data.IsAdsRemoved },
-            { "LastSaved", data.LastSave }
-        };
+            {
+                { "Experience", data.Experience },
+                { "Level", data.Level },
+                { "IsAdsRemoved", data.IsAdsRemoved },
+                { "LastSaved", data.LastSave }
+            };
 
-            await CloudSaveService.Instance.Data.ForceSaveAsync(saveDict);
+            await CloudSaveService.Instance.Data.Player.SaveAsync(saveDict);
         }
 
         public async Task<PlayerDataSave> LoadFromCloud()
@@ -38,14 +38,14 @@ namespace Project.Scripts
         public async Task ClearCloudSave()
         {
             var saveDict = new Dictionary<string, object>
-    {
-        { "Experience", 0 },
-        { "Level", 0 },
-        { "IsAdsRemoved", false }, 
-        { "LastSaved", 0L }
-    };
+            {
+                { "Experience", 0 },
+                { "Level", 0 },
+                { "IsAdsRemoved", false },
+                { "LastSaved", 0L }
+            };
 
-            await CloudSaveService.Instance.Data.ForceSaveAsync(saveDict);
+            await CloudSaveService.Instance.Data.Player.SaveAsync(saveDict);
         }
     }
 }

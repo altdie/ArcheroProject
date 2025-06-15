@@ -16,7 +16,7 @@ namespace Project.Scripts.PlayerModels
         public bool IsAdsRemoved { get; set; }
         public int LastSave { get; set; }
         public int Speed = 5; // test 
-        private bool isAttacking;
+        private bool _isAttacking;
 
         public Health PlayerHealth { get; private set; }
         public Weapon<BowConfig> CurrentWeapon;
@@ -43,16 +43,19 @@ namespace Project.Scripts.PlayerModels
 
         public void StopAttacking()
         {
-            isAttacking = false;
+            _isAttacking = false;
         }
 
         public async void StartAttack()
         {
-            if (isAttacking) return;
+            if (_isAttacking)
+            {
+                return;
+            }
 
-            isAttacking = true;
+            _isAttacking = true;
 
-            while (isAttacking)
+            while (_isAttacking)
             {
                 CurrentWeapon.InstantAttack();
 

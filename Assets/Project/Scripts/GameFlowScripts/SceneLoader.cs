@@ -8,8 +8,8 @@ namespace Project.Scripts.GameFlowScripts
 {
     public class SceneLoader // пока что хз что именно делать с этим классом. Хочу сделать класс некий единственный удобный монобех, но жду твоего коммента по нему или стоит его разбить на парочку мелких классов
     {
-        private Button _startGameButton;
-        private TextMeshProUGUI _logTxt;
+        private readonly Button _startGameButton;
+        private readonly TextMeshProUGUI _logTxt;
 
         public SceneLoader(Button startGameButton, TextMeshProUGUI logTxt)
         {
