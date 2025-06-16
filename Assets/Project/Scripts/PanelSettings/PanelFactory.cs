@@ -28,8 +28,8 @@ namespace Project.Scripts.PanelSettings
 
         public void DestroyPanel()
         {
-                Object.Destroy(_currentPanelView.gameObject); 
-                _currentPanelView = null;
+            Object.Destroy(_currentPanelView.gameObject); 
+            _currentPanelView = null;
         }
 
     }

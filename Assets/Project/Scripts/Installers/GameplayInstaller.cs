@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Assets.Project.Scripts.ADS;
 using Project.Scripts.Addressables;
 using Project.Scripts.ADS;
 using Project.Scripts.BulletFactoryEnemy;
@@ -7,6 +6,7 @@ using Project.Scripts.BulletModel;
 using Project.Scripts.Enemies;
 using Project.Scripts.Firebase;
 using Project.Scripts.GameFlowScripts;
+using Project.Scripts.NextLevel;
 using Project.Scripts.PanelSettings;
 using Project.Scripts.Players;
 using Project.Scripts.SaveSystem;
@@ -14,9 +14,9 @@ using Project.Scripts.UI;
 using Project.Scripts.Weapons;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.HID;
 using UnityEngine.UI;
 using Zenject;
+using Project.Scripts.NextLevel;
 
 namespace Project.Scripts.Installers
 {

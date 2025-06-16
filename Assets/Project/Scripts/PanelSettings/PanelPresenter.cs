@@ -28,7 +28,6 @@ namespace Project.Scripts.PanelSettings
 
         private void OnFreeLifeClicked()
         {
-            Debug.Log("❤️ Обработка кнопки Free Life в Presenter");
             _gameFlow.ShowRewardedAdCallback();
         }
 

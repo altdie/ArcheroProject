@@ -25,7 +25,6 @@ namespace Project.Scripts.Installers
             }
         }
 
-
         public void OnInitializationComplete()
         {
             Debug.Log("Unity Ads initialization complete.");

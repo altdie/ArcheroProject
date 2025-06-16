@@ -19,19 +19,10 @@ namespace Project.Scripts.ADS
 
             if (playerData.IsAdsRemoved)
             {
-                Debug.Log("Ads removed, реклама не загружается");
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_adUnitId))
-            {
-                Advertisement.Load(_adUnitId, this);
-                Debug.Log("Запущена загрузка рекламы: " + _adUnitId);
-            }
-            else
-            {
-                Debug.LogWarning("AdUnitId не установлен");
-            }
+            Advertisement.Load(_adUnitId, this);
         }
 
         public void ShowAd(Action onAdWatchedCallback)
@@ -72,8 +63,6 @@ namespace Project.Scripts.ADS
             _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer)
                 ? _iOSAdUnitId
                 : _androidAdUnitId;
-
-            Debug.Log($"[RewardedAds] Используется AdUnitID: {_adUnitId}");
         }
     }
 }

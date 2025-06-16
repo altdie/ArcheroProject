@@ -6,6 +6,7 @@ using Project.Scripts.ADS;
 using Project.Scripts.Enemies;
 using Project.Scripts.Firebase;
 using Project.Scripts.Installers;
+using Project.Scripts.NextLevel;
 using Project.Scripts.PanelSettings;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
@@ -37,13 +38,13 @@ namespace Project.Scripts.GameFlowScripts
         private readonly PanelFactory _panelFactory;
         private readonly DoorView _doorView;
         private readonly SceneLoader _sceneLoader;
+        private readonly PlayerStatsUIView _playerStatsUIView;
+        private readonly AdsService _adsService;
         private PlayerStatsUIPresenter _playerStatsUIPresenter;
         private PlayerStatsUIModel _playerStatsUIModel;
-        private readonly PlayerStatsUIView _playerStatsUIView;
         private CancellationTokenSource _cts;
         private CancellationToken _token;
         private PanelPresenter _panelPresenter;
-        private readonly AdsService _adsService;
 
         public GameFlow(
             EnemyFactory enemyFactory,

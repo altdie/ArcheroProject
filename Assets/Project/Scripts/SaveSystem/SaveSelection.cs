@@ -29,7 +29,7 @@ namespace Project.Scripts.SaveSystem
             _localSave.Save(data);
         }
 
-        public async Task<PlayerDataSave> LoadAsync()
+        public async UniTask<PlayerDataSave> LoadAsync()
         {
             var localData = _localSave.Load();
             var cloudData = await _cloudSave.LoadFromCloud();

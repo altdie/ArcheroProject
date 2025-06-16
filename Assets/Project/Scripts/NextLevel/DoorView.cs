@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace Project.Scripts
+namespace Project.Scripts.NextLevel
 {
     public class DoorView : IDoorView
     {
-        private Collider _collider;
+        private readonly Collider _collider;
 
         public DoorView(Collider collider)
         {
