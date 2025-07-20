@@ -17,7 +17,7 @@ namespace Project.Scripts.Players
         private readonly SceneData _sceneData;
         private readonly IAssetProvider _assetProvider;
         private readonly PlayerPrefsSave _playerPrefsSave;
-        private DiContainer _container;
+        private readonly DiContainer _container;
 
         public PlayerFactory(WeaponFactory weaponFactory, SceneData sceneData, IAssetProvider assetProvider, PlayerPrefsSave playerPrefsSave, DiContainer container)
         {
@@ -39,6 +39,8 @@ namespace Project.Scripts.Players
             var playerSaveData = _playerPrefsSave.Load();
             var player = new PlayerModel(health, 10, weapon, playerMovement, playerInput.Joystick, playerSaveData.Experience, playerSaveData.Level, playerSaveData.IsAdsRemoved, playerSaveData.LastSaved);
 
+            PlayerView playerView = playerMovement.GetComponent<PlayerView>();
+            playerView.Initialize(player);
             playerMovement.Initialize(player, playerInput, health, _sceneData, playerSaveData.Experience);
             player.SetWeapon(weapon);
             _container.Inject(player);

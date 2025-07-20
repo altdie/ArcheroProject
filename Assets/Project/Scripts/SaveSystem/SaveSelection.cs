@@ -1,5 +1,4 @@
 using System.Threading;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
@@ -18,6 +17,7 @@ namespace Project.Scripts.SaveSystem
             _cloudSave = cloudSave;
             InitializeUnityServices();
         }
+
         private async void InitializeUnityServices()
         {
             await UnityServices.InitializeAsync();
@@ -35,7 +35,9 @@ namespace Project.Scripts.SaveSystem
             var cloudData = await _cloudSave.LoadFromCloud();
 
             if (cloudData.LastSaved > localData.LastSaved)
+            {
                 return cloudData;
+            }
 
             return localData;
         }

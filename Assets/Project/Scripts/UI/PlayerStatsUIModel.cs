@@ -4,14 +4,14 @@ namespace Project.Scripts.UI
 {
     public class PlayerStatsUIModel
     {
-        private readonly PlayerModel _player;
-        public int Level => _player.Level;
-        public float Experience => _player.Experience;
+        public PlayerModel PlayerModel;
+        public int Level => PlayerModel.Level;
+        public float Experience => PlayerModel.Experience;
         public float MaxExperience { get; set; }
 
         public PlayerStatsUIModel(PlayerModel player, float maxExperience)
         {
-            _player = player;
+            PlayerModel = player;
             MaxExperience = maxExperience;
         }
     }

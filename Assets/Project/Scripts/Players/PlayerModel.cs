@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
@@ -11,7 +12,19 @@ namespace Project.Scripts.PlayerModels
     {
         private const int ATTACK_DELAY = 250;
 
-        public int Experience { get; set; }
+        private int _experience;
+        public int Experience
+        {
+            get => _experience;
+            set
+            {
+                if (_experience != value)
+                {
+                    _experience = value;
+                    OnExperienceChanged?.Invoke();
+                }
+            }
+        }
         public int Level { get; set; }
         public bool IsAdsRemoved { get; set; }
         public int LastSave { get; set; }
@@ -22,6 +35,8 @@ namespace Project.Scripts.PlayerModels
         public Weapon<BowConfig> CurrentWeapon;
         public PlayerMovement PlayerMovement { get; }
         private readonly Joystick _joystick;
+        public event Action OnDeath;
+        public event Action OnExperienceChanged;
 
         public PlayerModel(Health playerHealth, int speed, Weapon<BowConfig> currentWeapon, PlayerMovement playerMovement, Joystick joystick, int experience, int level, bool isAdsRemoved, int lastSave)
         {
@@ -34,6 +49,8 @@ namespace Project.Scripts.PlayerModels
             Level = level;
             IsAdsRemoved = isAdsRemoved;
             LastSave = lastSave;
+
+            PlayerHealth.OnHealthChanged += OnHealthChanged;
         }
 
         public void Move()
@@ -81,6 +98,14 @@ namespace Project.Scripts.PlayerModels
         public void Tick()
         {
             Move();
+        }
+
+        private void OnHealthChanged(float healthRatio)
+        {
+            if (PlayerHealth.IsDead)
+            {
+                OnDeath?.Invoke();
+            }
         }
     }
 }

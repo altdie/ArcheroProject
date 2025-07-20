@@ -1,36 +1,21 @@
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Firebase;
 using Firebase.Analytics;
-using Firebase.Extensions;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace Project.Scripts.Firebase
 {
-    public class FirebaseAnalyticsService : IAnalyticsService
+    public class FirebaseAnalyticsService : IAnalyticsService, IInitializable
     {
-        private readonly string _menuSceneName = "MenuScene";
-        private bool _initialized;
-
-        public FirebaseAnalyticsService()
+        public void Initialize()
         {
-            Initialize();
+            _ = InitAsync();
         }
 
-        public async void Initialize()
+        public async UniTask InitAsync()
         {
-            if (_initialized) return;
-
-            var dependencyResult = await FirebaseApp.CheckAndFixDependenciesAsync();
-            if (dependencyResult == DependencyStatus.Available)
-            {
-                Debug.Log("Firebase initialized. Loading menu...");
-                _initialized = true;
-      //          SceneManager.LoadScene(_menuSceneName); // если это оставить то всегда при любом переходе сцены будет закидывать на сцену меню
-            }
-            else
-            {
-                Debug.LogError($"Firebase dependencies not available: {dependencyResult}");
-            }
+           await FirebaseApp.CheckAndFixDependenciesAsync();
         }
 
         public void LogEnemyDeath(int killsCount)

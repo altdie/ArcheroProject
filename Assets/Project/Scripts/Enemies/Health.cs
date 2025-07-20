@@ -5,9 +5,7 @@ namespace Project.Scripts.HealthInfo
 {
     public class Health
     {
-        public event Action OnEntityDeath;
         public event Action<float> OnHealthChanged;
-
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
         private readonly GameObject _entityObject;
@@ -24,21 +22,10 @@ namespace Project.Scripts.HealthInfo
             CurrentHealth -= damage;
             CurrentHealth = Mathf.Max(CurrentHealth, 0);
 
-            if (CurrentHealth <= 0)
-            {
-                Die();
-            }
-            else
-            {
-                float _currentHealth = CurrentHealth / MaxHealth;
-                OnHealthChanged?.Invoke(_currentHealth);
-            }
+            float currentHealthRatio = CurrentHealth / MaxHealth;
+            OnHealthChanged?.Invoke(currentHealthRatio);
         }
 
-        private void Die()
-        {
-            UnityEngine.Object.Destroy(_entityObject);
-            OnEntityDeath?.Invoke();
-        }
+        public bool IsDead => CurrentHealth <= 0;
     }
 }

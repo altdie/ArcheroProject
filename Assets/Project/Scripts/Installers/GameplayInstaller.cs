@@ -16,7 +16,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
-using Project.Scripts.NextLevel;
 
 namespace Project.Scripts.Installers
 {
@@ -34,6 +33,7 @@ namespace Project.Scripts.Installers
         [SerializeField] private PlayerStatsUIView _playerStatsUIView;
         [SerializeField] private TextMeshProUGUI _test;
         [SerializeField] private Button _testButton;
+        [SerializeField] private OnTriggerChecker _triggerChecker;
 
         public override void InstallBindings()
         {
@@ -80,8 +80,7 @@ namespace Project.Scripts.Installers
             Container.BindInstance(_levelCollider).AsSingle();
             Container.Bind<PanelView>()
                .FromComponentInNewPrefab(_panelGameOver)
-               .AsSingle()
-               .NonLazy();
+               .AsSingle();
             Container.Bind<PlayerStatsUIModel>().AsSingle();
             Container.Bind<PlayerStatsUIPresenter>().AsSingle().WithArguments(_playerStatsUIView);
         }
@@ -89,19 +88,16 @@ namespace Project.Scripts.Installers
         private void BindServices()
         {
             Container.Bind<IAssetProvider>().To<AssetProvider>().AsSingle();
-            Container.Bind<IAnalyticsService>().To<FirebaseAnalyticsService>().AsSingle();
-            Container.Bind<PlayerDataSave>().AsSingle();
-            Container.Bind<PlayerPrefsSave>().AsSingle();
             Container.Bind<TimeService>().AsSingle();
-            Container.Bind<CloudSave>().AsSingle();
-            Container.Bind<SaveSelection>().AsSingle();
+            Container.Bind<IAnalyticsService>().To<FirebaseAnalyticsService>().AsSingle();
         }
 
         private void BindGameLogic()
         {
             Container.BindInterfacesAndSelfTo<GameFlow>().AsSingle();
             Container.Bind<List<IPausable>>().AsSingle();
-            Container.Bind<DoorView>().AsSingle().WithArguments(_levelCollider);
+            Container.Bind<IDoorView>().To<DoorView>().AsSingle()
+            .WithArguments(_levelCollider, _triggerChecker);
             Container.Bind<SceneLoader>().AsSingle().WithArguments(_testButton, _test);
         }
     }

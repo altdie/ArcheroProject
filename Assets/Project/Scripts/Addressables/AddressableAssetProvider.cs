@@ -8,8 +8,9 @@ namespace Project.Scripts.Addressables
     public class AssetProvider : IAssetProvider
     {
         private const string PlayerPrefabAddress = "Player";
-        private const string PanelPrefabAddress = "GameOverPanel";
+        private const string PanelFreeGamePrefabAddress = "GameOverPanel";
         private const string ButtonADSAddress = "ButtonADS";
+        private const string PanelEndGame = "PanelGameEnd";
 
         public async Task<GameObject> LoadPlayerPrefabAsync()
         {
@@ -18,9 +19,9 @@ namespace Project.Scripts.Addressables
             return handle.Result;
         }
 
-        public async Task<PanelView> LoadPanelPrefabAsync()
+        public async Task<PanelView> LoadPanelPrefabFreeLifeAsync()
         {
-            var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PanelPrefabAddress);
+            var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PanelFreeGamePrefabAddress);
             await handle.Task;
 
             var panelGO = handle.Result;
@@ -38,6 +39,17 @@ namespace Project.Scripts.Addressables
             var button = prefab.GetComponent<Button>();
 
             return button;
+        }
+
+        public async Task<PanelView> LoadPanelPrefabEndGameAsync()
+        {
+            var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PanelEndGame);
+            await handle.Task;
+
+            var panelGO = handle.Result;
+            var panelView = panelGO.GetComponent<PanelView>();
+
+            return panelView;
         }
     }
 }

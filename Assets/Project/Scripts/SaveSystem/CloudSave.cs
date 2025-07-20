@@ -4,7 +4,7 @@ using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
 using Unity.Services.CloudSave;
 
-namespace Project.Scripts
+namespace Project.Scripts.SaveSystem
 {
     public class CloudSave
     {

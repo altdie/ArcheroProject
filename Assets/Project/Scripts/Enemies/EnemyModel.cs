@@ -1,8 +1,8 @@
+using System;
 using System.Collections;
 using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
 using Project.Scripts.Weapons;
-using UnityEngine;
 
 namespace Project.Scripts.Enemies
 {
@@ -12,35 +12,41 @@ namespace Project.Scripts.Enemies
         private Weapon<StoneCannonConfig> CurrentWeapon { get; set; }
         public Health EnemyHealth { get; private set; }
 
-        public EnemyModel(EnemyConfig config, Weapon<StoneCannonConfig> weapon, Health health, int eXP)
+        public event Action OnDeath;
+
+        public EnemyModel(EnemyConfig config, Weapon<StoneCannonConfig> weapon, Health health, int exp)
         {
             CurrentWeapon = weapon;
             EnemyHealth = health;
-            EXP = eXP;
+            EXP = exp;
+
+            EnemyHealth.OnHealthChanged += OnHealthChanged;
+        }
+
+        private void OnHealthChanged(float healthRatio)
+        {
+            if (EnemyHealth.IsDead)
+            {
+                OnDeath?.Invoke();
+            }
+        }
+
+        public IEnumerator AutoAttack()
+        {
+            while (true)
+            {
+                Attack();
+                yield return new UnityEngine.WaitForSeconds(CurrentWeapon.Config.FireRate);
+            }
         }
 
         private void Attack()
         {
             CurrentWeapon.InstantAttack();
         }
-        
-        public IEnumerator AutoAttack()
-        {
-            while (true)
-            {
-                Attack();
-                yield return new WaitForSeconds(CurrentWeapon.Config.FireRate);
-            }
-        }
 
-        public virtual void PauseAttack()
-        {
-            // по умолчанию ничего не делаем
-        }
+        public virtual void PauseAttack() { }
 
-        public virtual void ResumeAttack()
-        {
-            // по умолчанию ничего не делаем
-        }
+        public virtual void ResumeAttack() { }
     }
 }

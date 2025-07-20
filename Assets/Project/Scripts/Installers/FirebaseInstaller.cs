@@ -1,4 +1,7 @@
 ﻿using Project.Scripts.Firebase;
+using Project.Scripts.GameFlowScripts;
+using Project.Scripts.Players;
+using UnityEngine;
 using Zenject;
 
 namespace Project.Scripts.Installers
@@ -7,10 +10,8 @@ namespace Project.Scripts.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<IAnalyticsService>()
-                .To<FirebaseAnalyticsService>()
-                .AsSingle()
-                .NonLazy();
+            Container.BindInterfacesTo<FirebaseAnalyticsService>().AsSingle();
+            Container.BindInterfacesTo<EntryPoint>().AsSingle();
         }
     }
 }

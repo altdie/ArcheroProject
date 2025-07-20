@@ -1,20 +1,22 @@
 using System;
-using Assets.Project.Scripts.ADS;
+using System.Diagnostics;
+using Project.Scripts.Players;
 
 namespace Project.Scripts.ADS
 {
-    public class AdsService  // простой класс, бесполезный интерфейс который я не понимаю как использовать.
+    public class AdsService
     {
         private readonly RewardedAds _rewardedAds;
         private readonly InterstitialAds _interstitialAds;
+        private readonly PlayerPrefsSave _save;
 
-        public AdsService(RewardedAds rewardedAds, InterstitialAds interstitialAds)
+        public AdsService(RewardedAds rewardedAds, InterstitialAds interstitialAds, PlayerPrefsSave save)
         {
             _rewardedAds = rewardedAds;
             _interstitialAds = interstitialAds;
-
-            _rewardedAds.Initialize();
-            _interstitialAds.Initialize();
+            _save = save;
+            _rewardedAds.Initialize(_save);
+            _interstitialAds.Initialize(_save);
         }
 
         public void ShowRewardedAd(Action reward)

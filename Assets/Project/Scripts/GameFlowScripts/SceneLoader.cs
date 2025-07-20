@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Project.Scripts.GameFlowScripts
 {
-    public class SceneLoader // пока что хз что именно делать с этим классом. Хочу сделать класс некий единственный удобный монобех, но жду твоего коммента по нему или стоит его разбить на парочку мелких классов
+    public class SceneLoader 
     {
         private readonly Button _startGameButton;
         private readonly TextMeshProUGUI _logTxt;
@@ -16,11 +16,6 @@ namespace Project.Scripts.GameFlowScripts
             _startGameButton = startGameButton;
             _logTxt = logTxt;
             _startGameButton.onClick.AddListener(StartGame);
-        }
-
-        private void OnTriggerEnter(Collider other) // тут я не очень понимаю, мне нужно сделать монобех который будет контрлировать такое? Или можно как то другим способом?
-        {
-            ReloadScene();
         }
 
         public void ReloadScene()

@@ -7,7 +7,6 @@ namespace Project.Scripts.Auth
     public class AuthView : MonoBehaviour
     {
         [SerializeField] private Button _signInButton;
-
         private AuthPresenter _presenter;
 
         [Inject]

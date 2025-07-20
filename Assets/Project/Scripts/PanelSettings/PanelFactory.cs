@@ -17,12 +17,21 @@ namespace Project.Scripts.PanelSettings
             _assetProvider = assetProvider;
         }
 
-        public async UniTask<PanelView> CreatePanelAsync(CancellationToken token)
+        public async UniTask<PanelView> CreatePanelFreeLife(CancellationToken token)
         {
-            _currentPanelView = await _assetProvider.LoadPanelPrefabAsync();
+            _currentPanelView = await _assetProvider.LoadPanelPrefabFreeLifeAsync();
             token.ThrowIfCancellationRequested();
             _currentPanelView.transform.SetParent(_canvas.transform, false);
             _currentPanelView.gameObject.SetActive(true); 
+            return _currentPanelView;
+        }
+
+        public async UniTask<PanelView> CreatePanelEndGame(CancellationToken token)
+        {
+            _currentPanelView = await _assetProvider.LoadPanelPrefabEndGameAsync();
+            token.ThrowIfCancellationRequested();
+            _currentPanelView.transform.SetParent(_canvas.transform, false);
+            _currentPanelView.gameObject.SetActive(true);
             return _currentPanelView;
         }
 
