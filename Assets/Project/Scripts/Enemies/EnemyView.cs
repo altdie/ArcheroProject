@@ -11,25 +11,35 @@ namespace Project.Scripts.Enemies
 
         public Transform[] WeaponTransform;
         [SerializeField] private Slider _healthBar;
+        [SerializeField] public VFXSpawner _vfxSpawner;
 
         private EnemyModel _enemyModel;
+        private Health _health;
 
         public void Initialize(EnemyModel enemyModel, Transform[] weaponTransform, Health health)
         {
             _enemyModel = enemyModel;
             WeaponTransform = weaponTransform;
-
+            _health = health;
             _healthBar.maxValue = 1f;
-            _healthBar.value = health.CurrentHealth / health.MaxHealth;
+            _healthBar.value = _health.CurrentHealth / _health.MaxHealth;
+        }
 
-            health.OnHealthChanged += UpdateHealthBar;
+        public void Subscribe()
+        {
+            _health.OnHealthChanged += UpdateHealthBar;
             _enemyModel.OnDeath += Die;
+        }
+
+        public void Unsubscribe()
+        {
+            _health.OnHealthChanged -= UpdateHealthBar;
+            _enemyModel.OnDeath -= Die;
         }
 
         private void OnDestroy()
         {
-            if (_enemyModel != null)
-                _enemyModel.OnDeath -= Die;
+            Unsubscribe();
         }
 
         public void TakeDamage(float damage)
@@ -44,6 +54,7 @@ namespace Project.Scripts.Enemies
 
         private void Die()
         {
+            _vfxSpawner.SpawnEffect(transform.position);
             OnEntityDeath?.Invoke();
             Destroy(gameObject);
         }

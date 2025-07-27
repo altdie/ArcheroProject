@@ -16,6 +16,10 @@ namespace Project.Scripts.Players
         public void Initialize(PlayerModel playerModel)
         {
             _playerModel = playerModel;
+        }
+
+        public void SubscribeToModel()
+        {
             _playerModel.OnDeath += Die;
         }
 

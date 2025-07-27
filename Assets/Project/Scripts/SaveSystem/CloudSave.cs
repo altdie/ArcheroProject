@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
 using Unity.Services.CloudSave;
+using Cysharp.Threading.Tasks;
 
 namespace Project.Scripts.SaveSystem
 {
     public class CloudSave
     {
-        public async Task SaveToCloud(PlayerModel data)
+        public async UniTask SaveToCloud(PlayerModel data)
         {
             var saveDict = new Dictionary<string, object>
             {
@@ -18,13 +18,13 @@ namespace Project.Scripts.SaveSystem
                 { "LastSaved", data.LastSave }
             };
 
-            await CloudSaveService.Instance.Data.Player.SaveAsync(saveDict);
+            await CloudSaveService.Instance.Data.Player.SaveAsync(saveDict).AsUniTask();
         }
 
-        public async Task<PlayerDataSave> LoadFromCloud()
+        public async UniTask<PlayerDataSave> LoadFromCloud()
         {
             var keys = new HashSet<string> { "Experience", "Level", "IsAdsRemoved", "LastSaved" };
-            var result = await CloudSaveService.Instance.Data.LoadAsync(keys);
+            var result = await CloudSaveService.Instance.Data.LoadAsync(keys).AsUniTask();
 
             return new PlayerDataSave
             {
@@ -35,7 +35,7 @@ namespace Project.Scripts.SaveSystem
             };
         }
 
-        public async Task ClearCloudSave()
+        public async UniTask ClearCloudSave()
         {
             var saveDict = new Dictionary<string, object>
             {
@@ -45,7 +45,7 @@ namespace Project.Scripts.SaveSystem
                 { "LastSaved", 0L }
             };
 
-            await CloudSaveService.Instance.Data.Player.SaveAsync(saveDict);
+            await CloudSaveService.Instance.Data.Player.SaveAsync(saveDict).AsUniTask();
         }
     }
 }

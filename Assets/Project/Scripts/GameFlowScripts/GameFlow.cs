@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Project.Scripts.ADS;
+using Project.Scripts.Auth;
 using Project.Scripts.Enemies;
 using Project.Scripts.Firebase;
 using Project.Scripts.Installers;
@@ -41,6 +42,8 @@ namespace Project.Scripts.GameFlowScripts
         private readonly SceneLoader _sceneLoader;
         private readonly PlayerStatsUIView _playerStatsUIView;
         private readonly AdsService _adsService;
+        private readonly AuthManager _authManager;
+        private readonly AudioManager _audioManager;
         private PlayerStatsUIPresenter _playerStatsUIPresenter;
         private PlayerStatsUIModel _playerStatsUIModel;
         private CancellationTokenSource _cts;
@@ -61,7 +64,7 @@ namespace Project.Scripts.GameFlowScripts
             SaveSelection saveSelection,
             PanelFactory panelFactory,
             IDoorView doorView, PlayerStatsUIView playerStatsUIView,
-            SceneLoader sceneLoader, AdsService adsService, PlayerPrefsSave playerPrefsSave)
+            SceneLoader sceneLoader, AdsService adsService, PlayerPrefsSave playerPrefsSave, AuthManager authManager, AudioManager audioManager)
         {
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
@@ -79,6 +82,8 @@ namespace Project.Scripts.GameFlowScripts
             _sceneLoader = sceneLoader;
             _adsService = adsService;
             _playerPrefsSave = playerPrefsSave;
+            _authManager = authManager;
+            _audioManager = audioManager;
         }
 
         public async void Initialize()
@@ -86,8 +91,10 @@ namespace Project.Scripts.GameFlowScripts
             await InitializeAsync();
             _adsInitializer.InitializeAds();
             _adsService.LoadInterstitialAd();
+            _adsService.LoadRewardedAd();
             _rewardAdsComplete = false;
             _doorView.Disable();
+            _audioManager.PlayBackgroundMusic();
         }
 
         private async UniTask InitializeAsync()
@@ -104,9 +111,12 @@ namespace Project.Scripts.GameFlowScripts
             _enemies = _enemyFactory.Enemies;
             _playerStatsUIModel = new PlayerStatsUIModel(_player, _sceneData.MaxExperience);
             _playerStatsUIPresenter = new PlayerStatsUIPresenter(_playerStatsUIModel, _playerStatsUIView);
+            _playerStatsUIPresenter.Initialize();
             _player.OnDeath += OnPlayerDeath;
 
+            await _authManager.InitializeAsync();
             await LoadPlayerDataAsync(_token);
+            await _saveSelection.InitializeAsync();
         }
 
         private async UniTask LoadPlayerDataAsync(CancellationToken token)
@@ -147,8 +157,10 @@ namespace Project.Scripts.GameFlowScripts
             {
                 case false:
                     PanelView panelView = await _panelFactory.CreatePanelFreeLife(_token);
+                    panelView.AnimateIn();
                     var panelModel = new PanelADSModel(_adsService, _sceneLoader, RevivePlayer);
                     _panelPresenter = new PanelADSPresenter(panelView, panelModel);
+                    _panelPresenter.SubscribeOnClick();
                     break;
 
                 case true:                  
@@ -157,8 +169,10 @@ namespace Project.Scripts.GameFlowScripts
                     LogDeathAnalytics();
 
                     PanelView panelEndGame = await _panelFactory.CreatePanelEndGame(_token);
+                    panelEndGame.AnimateIn();
                     var panelModelEndGame = new PanelADSModel(_adsService, _sceneLoader, RevivePlayer);
                     _panelPresenter = new PanelADSPresenter(panelEndGame, panelModelEndGame);
+                    _panelPresenter.SubscribeOnClick();
                     break;
             }
         }

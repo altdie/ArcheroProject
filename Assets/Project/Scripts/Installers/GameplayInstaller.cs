@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Project.Scripts.Addressables;
 using Project.Scripts.ADS;
+using Project.Scripts.Auth;
 using Project.Scripts.BulletFactoryEnemy;
 using Project.Scripts.BulletModel;
 using Project.Scripts.Enemies;
@@ -31,9 +32,8 @@ namespace Project.Scripts.Installers
         [SerializeField] private PanelView _panelGameOver;
         [SerializeField] private Canvas _panelCanvas;
         [SerializeField] private PlayerStatsUIView _playerStatsUIView;
-        [SerializeField] private TextMeshProUGUI _test;
-        [SerializeField] private Button _testButton;
         [SerializeField] private OnTriggerChecker _triggerChecker;
+        [SerializeField] private AudioManager _audioManager;
 
         public override void InstallBindings()
         {
@@ -68,6 +68,7 @@ namespace Project.Scripts.Installers
             Container.BindInstance(_enemySpawnData).AsSingle();
             Container.BindInstance(_sceneData).AsSingle();
             Container.BindInstance(_playerStatsUIView).AsSingle();
+            Container.BindInstance(_audioManager).AsSingle();
         }
 
         private void BindUI()
@@ -75,7 +76,7 @@ namespace Project.Scripts.Installers
             Container.Bind<AdsInitializer>().AsSingle();
             Container.Bind<InterstitialAds>().AsSingle();
             Container.Bind<RewardedAds>().AsSingle();
-            Container.Bind<AdsService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AdsService>().AsSingle();
             Container.BindInstance(_panelCanvas).AsSingle();
             Container.BindInstance(_levelCollider).AsSingle();
             Container.Bind<PanelView>()
@@ -98,7 +99,7 @@ namespace Project.Scripts.Installers
             Container.Bind<List<IPausable>>().AsSingle();
             Container.Bind<IDoorView>().To<DoorView>().AsSingle()
             .WithArguments(_levelCollider, _triggerChecker);
-            Container.Bind<SceneLoader>().AsSingle().WithArguments(_testButton, _test);
+            Container.Bind<SceneLoader>().AsSingle();
         }
     }
 }

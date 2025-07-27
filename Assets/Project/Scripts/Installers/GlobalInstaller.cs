@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using Project.Scripts;
+using Project.Scripts.Auth;
 using Project.Scripts.Players;
 using Project.Scripts.SaveSystem;
 using UnityEngine;
@@ -13,10 +11,16 @@ namespace Project.Scripts.Installers
         public override void InstallBindings()
         {
             Container.Bind<PlayerDataSave>().AsSingle().NonLazy();
+            Container.Bind<PlayerPrefsSave>().AsSingle().NonLazy();
+            Container.Bind<AuthManager>().AsSingle();
             Container.Bind<CloudSave>().AsSingle();
             Container.Bind<SaveSelection>().AsSingle();
-            Container.Bind<PlayerPrefsSave>().AsSingle().NonLazy();
+        }
 
+        public override void Start()
+        {
+            var authManager = Container.Resolve<AuthManager>();
+            _ = authManager.InitializeAsync();
         }
     }
 }

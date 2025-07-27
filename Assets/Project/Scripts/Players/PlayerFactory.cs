@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Project.Scripts.Addressables;
 using Project.Scripts.GameFlowScripts;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 namespace Project.Scripts.Players
 {
@@ -28,9 +29,9 @@ namespace Project.Scripts.Players
             _container = container;
         }
 
-        public async Task<PlayerModel> CreatePlayerAsync(PlayerSpawnPoint spawnPosition, int initialHealth, Joystick joystick)
+        public async UniTask<PlayerModel> CreatePlayerAsync(PlayerSpawnPoint spawnPosition, int initialHealth, Joystick joystick)
         {
-            GameObject playerPrefab = await _assetProvider.LoadPlayerPrefabAsync();
+            GameObject playerPrefab = await _assetProvider.CreatePlayerPrefabAsync();
             PlayerMovement playerMovement = Object.Instantiate(playerPrefab, spawnPosition.transform.position, Quaternion.identity).GetComponent<PlayerMovement>();
 
             var playerInput = new PlayerInputHandler(joystick);
@@ -38,10 +39,14 @@ namespace Project.Scripts.Players
             var health = new Health(initialHealth, playerMovement.gameObject);
             var playerSaveData = _playerPrefsSave.Load();
             var player = new PlayerModel(health, 10, weapon, playerMovement, playerInput.Joystick, playerSaveData.Experience, playerSaveData.Level, playerSaveData.IsAdsRemoved, playerSaveData.LastSaved);
+            player.SubscribeOnHealthChanged();
 
             PlayerView playerView = playerMovement.GetComponent<PlayerView>();
             playerView.Initialize(player);
+            playerView.SubscribeToModel();
             playerMovement.Initialize(player, playerInput, health, _sceneData, playerSaveData.Experience);
+            playerMovement.SetupHealthUI();
+            playerMovement.Subscribe();
             player.SetWeapon(weapon);
             _container.Inject(player);
             _container.Resolve<TickableManager>().Add(player);

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Project.Scripts.GameFlowScripts;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -8,31 +9,20 @@ namespace Project.Scripts.Auth
 {
     public class AuthManager
     {
-        private readonly SceneLoader _sceneLoader;
-
-        public AuthManager(SceneLoader sceneLoader)
-        {
-            _sceneLoader = sceneLoader;
-        }
-
-        public void SignIn()
-        {
-            _ = SignInAnonymous();
-        }
-
-        private async Task SignInAnonymous()
+        public async UniTask InitializeAsync()
         {
             try
             {
                 await UnityServices.InitializeAsync();
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
-                _sceneLoader.PlayerAuth();
+                if (!AuthenticationService.Instance.IsSignedIn)
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
             }
             catch (AuthenticationException ex)
             {
-                Debug.LogException(ex);
+                Debug.LogError("Авторизация не удалась: " + ex.Message);
             }
         }
     }
+
 }

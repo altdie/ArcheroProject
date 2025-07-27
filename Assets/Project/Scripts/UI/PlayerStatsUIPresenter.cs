@@ -9,9 +9,11 @@ public class PlayerStatsUIPresenter
     {
         _uiModel = uiModel;
         _uiView = uiView;
+    }
 
+    public void Initialize()
+    {
         _uiModel.PlayerModel.OnExperienceChanged += UpdateView;
-
         UpdateView();
     }
 

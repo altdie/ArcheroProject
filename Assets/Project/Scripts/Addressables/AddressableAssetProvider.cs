@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Project.Scripts.PanelSettings;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,14 +13,14 @@ namespace Project.Scripts.Addressables
         private const string ButtonADSAddress = "ButtonADS";
         private const string PanelEndGame = "PanelGameEnd";
 
-        public async Task<GameObject> LoadPlayerPrefabAsync()
+        public async UniTask<GameObject> CreatePlayerPrefabAsync()
         {
             var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<GameObject>(PlayerPrefabAddress);
             await handle.Task;
             return handle.Result;
         }
 
-        public async Task<PanelView> LoadPanelPrefabFreeLifeAsync()
+        public async UniTask<PanelView> CreatePanelPrefabFreeLifeAsync()
         {
             var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PanelFreeGamePrefabAddress);
             await handle.Task;
@@ -30,7 +31,7 @@ namespace Project.Scripts.Addressables
             return panelView;
         }
 
-        public async Task<Button> LoadRewardAdsbAsync()
+        public async UniTask<Button> CreateRewardAdsbAsync()
         {
             var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<GameObject>(ButtonADSAddress);
             await handle.Task;
@@ -41,7 +42,7 @@ namespace Project.Scripts.Addressables
             return button;
         }
 
-        public async Task<PanelView> LoadPanelPrefabEndGameAsync()
+        public async UniTask<PanelView> CreatePanelPrefabEndGameAsync()
         {
             var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PanelEndGame);
             await handle.Task;

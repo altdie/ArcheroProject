@@ -12,13 +12,15 @@ namespace Project.Scripts.Enemies
         private readonly WeaponFactory _weaponFactory;
         private readonly SceneData _sceneData;
         private readonly List<IPausable> _pausables;
+        private readonly AudioManager _audioManager;
         public List<EnemyModel> Enemies { get; } = new();
 
-        public EnemyFactory(WeaponFactory weaponFactory, SceneData sceneData, List<IPausable> pausables)
+        public EnemyFactory(WeaponFactory weaponFactory, SceneData sceneData, List<IPausable> pausables, AudioManager audioManager)
         {
             _weaponFactory = weaponFactory;
             _sceneData = sceneData;
             _pausables = pausables;
+            _audioManager = audioManager;
         }
 
         public void CreateEnemies(EnemySpawnData[] enemySpawnData)
@@ -42,11 +44,11 @@ namespace Project.Scripts.Enemies
 
                 if (data.Config is EnemyStoneConfig stoneConfig)
                 {
-                    enemy = new StoneEnemy(stoneConfig, _sceneData, enemyWeapon, enemyHealth);
+                    enemy = new StoneEnemy(stoneConfig, _sceneData, enemyWeapon, enemyHealth, _audioManager);
                 }
                 else
                 {
-                    enemy = new EnemyModel(data.Config, enemyWeapon, enemyHealth, data.Config.EXP);
+                    enemy = new EnemyModel(data.Config, enemyWeapon, enemyHealth, data.Config.EXP, _audioManager);
                 }
 
                 if (enemy is IPausable pausable)
@@ -56,6 +58,7 @@ namespace Project.Scripts.Enemies
                 Enemies.Add(enemy);
 
                 enemyObject.Initialize(enemy, enemyObject.WeaponTransform, enemyHealth);
+                enemyObject.Subscribe();
             }
         }
     }

@@ -9,7 +9,10 @@
         {
             _view = view;
             _model = model;
+        }
 
+        public void SubscribeOnClick()
+        {
             _view.ReloadGameClicked += OnReloadClicked;
             _view.RewardedAdsClicked += OnFreeLifeClicked;
         }

@@ -19,7 +19,7 @@ namespace Project.Scripts.PanelSettings
 
         public async UniTask<PanelView> CreatePanelFreeLife(CancellationToken token)
         {
-            _currentPanelView = await _assetProvider.LoadPanelPrefabFreeLifeAsync();
+            _currentPanelView = await _assetProvider.CreatePanelPrefabFreeLifeAsync();
             token.ThrowIfCancellationRequested();
             _currentPanelView.transform.SetParent(_canvas.transform, false);
             _currentPanelView.gameObject.SetActive(true); 
@@ -28,7 +28,7 @@ namespace Project.Scripts.PanelSettings
 
         public async UniTask<PanelView> CreatePanelEndGame(CancellationToken token)
         {
-            _currentPanelView = await _assetProvider.LoadPanelPrefabEndGameAsync();
+            _currentPanelView = await _assetProvider.CreatePanelPrefabEndGameAsync();
             token.ThrowIfCancellationRequested();
             _currentPanelView.transform.SetParent(_canvas.transform, false);
             _currentPanelView.gameObject.SetActive(true);

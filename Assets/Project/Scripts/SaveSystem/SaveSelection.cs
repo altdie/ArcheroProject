@@ -15,10 +15,9 @@ namespace Project.Scripts.SaveSystem
         {
             _localSave = localSave;
             _cloudSave = cloudSave;
-            InitializeUnityServices();
         }
 
-        private async void InitializeUnityServices()
+        public async UniTask InitializeAsync()
         {
             await UnityServices.InitializeAsync();
         }

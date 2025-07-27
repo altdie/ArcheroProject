@@ -49,7 +49,10 @@ namespace Project.Scripts.PlayerModels
             Level = level;
             IsAdsRemoved = isAdsRemoved;
             LastSave = lastSave;
+        }
 
+        public void SubscribeOnHealthChanged()
+        {
             PlayerHealth.OnHealthChanged += OnHealthChanged;
         }
 

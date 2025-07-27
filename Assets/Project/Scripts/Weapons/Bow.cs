@@ -7,12 +7,14 @@ namespace Project.Scripts.Weapons
     {
         private readonly Transform _bulletPosition;
         private readonly BulletFactoryPlayer _bulletFactory;
+        private readonly AudioManager _audioManager;
 
-        public Bow(BowConfig bowConfig, Transform bulletPosition, BulletFactoryPlayer bulletFactory)
+        public Bow(BowConfig bowConfig, Transform bulletPosition, BulletFactoryPlayer bulletFactory, AudioManager audioManager)
             : base(bowConfig)
         {
             _bulletPosition = bulletPosition;
             _bulletFactory = bulletFactory;
+            _audioManager = audioManager;
         }
 
         public override void InstantAttack()
@@ -22,6 +24,7 @@ namespace Project.Scripts.Weapons
             bullet.Shoot(_bulletPosition.forward, Config.BulletSpeed);
 
             IncreaseBulletsFired();
+            _audioManager.PlayShotSound();
         }
     }
 }

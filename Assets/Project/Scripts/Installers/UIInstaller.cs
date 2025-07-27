@@ -1,19 +1,18 @@
+using Project.Scripts.Players;
 using Project.Scripts.Purchasers;
+using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
-namespace Project.Scripts.Installers
+public class UIInstaller : MonoInstaller
 {
-    public class UIInstaller : MonoInstaller
-    {
-        [SerializeField] private Button _buyButton;
+    [SerializeField] private PurchaseView _purchaseView;
 
-        public override void InstallBindings()
-        {
-            Container.Bind<Purchaser>().AsSingle().NonLazy();
-            Container.Bind<Button>().FromInstance(_buyButton).AsSingle();
-            Container.Bind<PurchaseHandler>().AsSingle().NonLazy();
-        }
+    public override void InstallBindings()
+    {
+        Container.Bind<IPurchaser>().To<UnityIAPPurchaser>().AsSingle();
+        Container.Bind<PlayerPrefsSave>().AsSingle();
+        Container.Bind<PurchaseView>().FromInstance(_purchaseView).AsSingle();
+        Container.BindInterfacesAndSelfTo<PurchasePresenter>().AsSingle();
     }
 }

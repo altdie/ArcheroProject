@@ -10,13 +10,14 @@ namespace Project.Scripts.Enemy
     {
         private readonly MonoBehaviour _coroutineRunner;
         private Coroutine _attackCoroutine;
+        private readonly AudioManager _audioManager;
 
-        public StoneEnemy(EnemyStoneConfig config, SceneData coroutineRunner, Weapon<StoneCannonConfig> weapon, Health health)
-            : base(config, weapon, health, config.EXP)
+        public StoneEnemy(EnemyStoneConfig config, SceneData coroutineRunner, Weapon<StoneCannonConfig> weapon, Health health, AudioManager audioManager)
+            : base(config, weapon, health, config.EXP, audioManager)
         {
             _coroutineRunner = coroutineRunner;
-
             StartAttack();
+            _audioManager = audioManager;
         }
 
         private void StartAttack()

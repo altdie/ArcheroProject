@@ -11,15 +11,21 @@ namespace Project.Scripts.Enemies
         public int EXP { get; private set; }
         private Weapon<StoneCannonConfig> CurrentWeapon { get; set; }
         public Health EnemyHealth { get; private set; }
+        private readonly AudioManager _audioManager;
 
         public event Action OnDeath;
 
-        public EnemyModel(EnemyConfig config, Weapon<StoneCannonConfig> weapon, Health health, int exp)
+        public EnemyModel(EnemyConfig config, Weapon<StoneCannonConfig> weapon, Health health, int exp, AudioManager audioManager)
         {
             CurrentWeapon = weapon;
             EnemyHealth = health;
             EXP = exp;
+            Subscribe();
+            _audioManager = audioManager;
+        }
 
+        private void Subscribe() // спросить у Миши
+        {
             EnemyHealth.OnHealthChanged += OnHealthChanged;
         }
 
@@ -27,6 +33,7 @@ namespace Project.Scripts.Enemies
         {
             if (EnemyHealth.IsDead)
             {
+                _audioManager.PlayEnemyDestroyedSound();
                 OnDeath?.Invoke();
             }
         }

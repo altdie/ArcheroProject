@@ -1,10 +1,11 @@
 using System;
 using System.Diagnostics;
 using Project.Scripts.Players;
+using Zenject;
 
 namespace Project.Scripts.ADS
 {
-    public class AdsService
+    public class AdsService : IInitializable
     {
         private readonly RewardedAds _rewardedAds;
         private readonly InterstitialAds _interstitialAds;
@@ -15,8 +16,6 @@ namespace Project.Scripts.ADS
             _rewardedAds = rewardedAds;
             _interstitialAds = interstitialAds;
             _save = save;
-            _rewardedAds.Initialize(_save);
-            _interstitialAds.Initialize(_save);
         }
 
         public void ShowRewardedAd(Action reward)
@@ -37,6 +36,12 @@ namespace Project.Scripts.ADS
         public void LoadInterstitialAd()
         {
             _interstitialAds.LoadAd();
+        }
+
+        public void Initialize()
+        {
+            _rewardedAds.Initialize(_save);
+            _interstitialAds.Initialize(_save);
         }
     }
 }

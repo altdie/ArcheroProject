@@ -30,9 +30,17 @@ namespace Project.Scripts.Players
             _health = health;
             _sceneData = sceneData;
             _player.Experience = Exp;
-            _health.OnHealthChanged += UpdateHealthBar;
+        }
+
+        public void SetupHealthUI()
+        {
             _healthBar.maxValue = 1f;
             _healthBar.value = _health.CurrentHealth / _health.MaxHealth;
+        }
+
+        public void Subscribe()
+        {
+            _health.OnHealthChanged += UpdateHealthBar;
         }
 
         public void Move()

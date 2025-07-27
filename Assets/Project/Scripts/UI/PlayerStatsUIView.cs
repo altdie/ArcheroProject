@@ -6,17 +6,17 @@ namespace Project.Scripts.UI
 {
     public class PlayerStatsUIView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI levelText;
-        [SerializeField] private Slider experienceSlider;
+        [SerializeField] private TextMeshProUGUI _levelText;
+        [SerializeField] private Slider _experienceSlider;
 
         public void SetLevelText(string text)
         {
-            levelText.text = text;
+            _levelText.text = text;
         }
 
         public void SetExperienceProgress(float progress)
         {
-            experienceSlider.value = Mathf.Clamp01(progress);
+            _experienceSlider.value = Mathf.Clamp01(progress);
         }
     }
 }
