@@ -56,10 +56,12 @@ namespace Project.Scripts.Players
 
             if (isCurrentlyMoving && !_isMoving)
             {
+                _player.PlayWalk();
                 _player.StopAttacking();
             }
             else if (!isCurrentlyMoving && _isMoving)
             {
+                _player.StopWalk();
                 _nearestEnemy = FindNearestEnemy();
                 if (_nearestEnemy != null)
                 {

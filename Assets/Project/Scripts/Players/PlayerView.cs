@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Project.Scripts.Enemies;
-using Project.Scripts.HealthInfo;
 using Project.Scripts.PlayerModels;
 using UnityEngine;
 

@@ -1,6 +1,5 @@
 using Project.Scripts.Players;
-using Project.Scripts.Purchasers;
-using System.ComponentModel;
+using Project.Scripts.Purchaser;
 using UnityEngine;
 using Zenject;
 

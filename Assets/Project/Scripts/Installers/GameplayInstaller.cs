@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Project.Scripts.Addressables;
 using Project.Scripts.ADS;
-using Project.Scripts.Auth;
+using Project.Scripts.Audio;
 using Project.Scripts.BulletFactoryEnemy;
 using Project.Scripts.BulletModel;
 using Project.Scripts.Enemies;
@@ -10,12 +10,9 @@ using Project.Scripts.GameFlowScripts;
 using Project.Scripts.NextLevel;
 using Project.Scripts.PanelSettings;
 using Project.Scripts.Players;
-using Project.Scripts.SaveSystem;
 using Project.Scripts.UI;
 using Project.Scripts.Weapons;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Project.Scripts.Installers
@@ -44,7 +41,7 @@ namespace Project.Scripts.Installers
             BindUI();
             BindGameLogic();
         }
-
+        
         private void BindFactories()
         {
             Container.Bind<WeaponFactory>().AsSingle();

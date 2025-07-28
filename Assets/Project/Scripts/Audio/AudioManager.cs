@@ -1,23 +1,25 @@
 using UnityEngine;
-using Zenject;
 
-public class AudioManager : MonoBehaviour
+namespace Project.Scripts.Audio
 {
-    [SerializeField] private AudioSource sfxSource;
-    [SerializeField] private AudioSource musicSource;
-
-    [SerializeField] private AudioClip shotClip;
-    [SerializeField] private AudioClip enemyDestroyedClip;
-    [SerializeField] private AudioClip backgroundMusic;
-
-    public void PlayShotSound() => sfxSource.PlayOneShot(shotClip);
-
-    public void PlayEnemyDestroyedSound() => sfxSource.PlayOneShot(enemyDestroyedClip);
-
-    public void PlayBackgroundMusic()
+    public class AudioManager : MonoBehaviour
     {
-        musicSource.clip = backgroundMusic;
-        musicSource.loop = true;
-        musicSource.Play();
+        [SerializeField] private AudioSource sfxSource;
+        [SerializeField] private AudioSource musicSource;
+
+        [SerializeField] private AudioClip shotClip;
+        [SerializeField] private AudioClip enemyDestroyedClip;
+        [SerializeField] private AudioClip backgroundMusic;
+
+        public void PlayShotSound() => sfxSource.PlayOneShot(shotClip);
+
+        public void PlayEnemyDestroyedSound() => sfxSource.PlayOneShot(enemyDestroyedClip);
+
+        public void PlayBackgroundMusic()
+        {
+            musicSource.clip = backgroundMusic;
+            musicSource.loop = true;
+            musicSource.Play();
+        }
     }
 }

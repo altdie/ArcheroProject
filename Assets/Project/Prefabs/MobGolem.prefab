@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 534255422097494760}
   - component: {fileID: 6383768375562488539}
   - component: {fileID: -7606547868852011712}
+  - component: {fileID: 8495303260791264629}
   m_Layer: 9
   m_Name: MobGolem
   m_TagString: Untagged
@@ -146,6 +147,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyDestroyedEffectPrefab: {fileID: 1879405709420521780}
+--- !u!114 &8495303260791264629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2864574390207900025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bc26c51108f84542a6133993d743254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 5468940582737448373}
 --- !u!1001 &1638853767703884336
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -549,6 +563,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}
+--- !u!95 &5468940582737448373 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1077356409, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}
+  m_PrefabInstance: {fileID: 5468940581667318476}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5468940582737448374 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1077356410, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}

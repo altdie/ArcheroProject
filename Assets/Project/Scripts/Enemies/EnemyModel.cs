@@ -1,59 +1,104 @@
 using System;
 using System.Collections;
+using Project.Scripts.Animations.Enemy;
+using Project.Scripts.Audio;
 using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
 using Project.Scripts.Weapons;
+using UnityEngine;
 
 namespace Project.Scripts.Enemies
 {
     public class EnemyModel : IPausable
     {
         public int EXP { get; private set; }
-        private Weapon<StoneCannonConfig> CurrentWeapon { get; set; }
-        public Health EnemyHealth { get; private set; }
+        private Weapon<StoneCannonConfig> CurrentWeapon { get; }
+        public Health EnemyHealth { get; }
         private readonly AudioManager _audioManager;
+        private readonly IEnemyAnimator _animator;
+        private readonly MonoBehaviour _coroutineRunner;
+
+        private bool _isDead;
+        private Coroutine _attackRoutine;
 
         public event Action OnDeath;
 
-        public EnemyModel(EnemyConfig config, Weapon<StoneCannonConfig> weapon, Health health, int exp, AudioManager audioManager)
+        public EnemyModel(
+            EnemyConfig config,
+            Weapon<StoneCannonConfig> weapon,
+            Health health,
+            int exp,
+            AudioManager audioManager,
+            IEnemyAnimator animator,
+            MonoBehaviour coroutineRunner 
+        )
         {
             CurrentWeapon = weapon;
             EnemyHealth = health;
             EXP = exp;
-            Subscribe();
             _audioManager = audioManager;
-        }
+            _animator = animator;
+            _coroutineRunner = coroutineRunner;
 
-        private void Subscribe() // спросить у Миши
-        {
             EnemyHealth.OnHealthChanged += OnHealthChanged;
         }
 
         private void OnHealthChanged(float healthRatio)
         {
+            if (_isDead) return;
+
+            _animator?.PlayGetHit();
+
             if (EnemyHealth.IsDead)
             {
+                _isDead = true;
                 _audioManager.PlayEnemyDestroyedSound();
-                OnDeath?.Invoke();
+                
+                _coroutineRunner.StartCoroutine(HandleDeath());
             }
+        }
+
+        private IEnumerator HandleDeath()
+        {
+            _animator?.PlayDie();
+            yield return new WaitForSeconds(0.9f);
+
+            OnDeath?.Invoke();
+        }
+
+        public void StartAutoAttack()
+        {
+            if (_attackRoutine == null && !_isDead)
+                _attackRoutine = _coroutineRunner.StartCoroutine(AutoAttack());
         }
 
         public IEnumerator AutoAttack()
         {
-            while (true)
+            while (!_isDead)
             {
                 Attack();
-                yield return new UnityEngine.WaitForSeconds(CurrentWeapon.Config.FireRate);
+                yield return new WaitForSeconds(CurrentWeapon.Config.FireRate);
             }
         }
 
         private void Attack()
         {
+            _animator?.PlayAttack();
             CurrentWeapon.InstantAttack();
         }
 
-        public virtual void PauseAttack() { }
+        public virtual void PauseAttack()
+        {
+            if (_attackRoutine != null)
+            {
+                _coroutineRunner.StopCoroutine(_attackRoutine);
+                _attackRoutine = null;
+            }
+        }
 
-        public virtual void ResumeAttack() { }
+        public virtual void ResumeAttack()
+        {
+            StartAutoAttack();
+        }
     }
 }

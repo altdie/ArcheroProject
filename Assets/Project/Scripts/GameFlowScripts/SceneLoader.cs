@@ -1,9 +1,5 @@
-using TMPro;
-using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Zenject;
 
 namespace Project.Scripts.GameFlowScripts
 {

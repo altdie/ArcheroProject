@@ -1,10 +1,8 @@
 using System;
 using Project.Scripts.Players;
-using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
-namespace Project.Scripts.Purchasers
+namespace Project.Scripts.Purchaser
 {
     public class PurchasePresenter : IInitializable, IDisposable
     {

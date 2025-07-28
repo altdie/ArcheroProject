@@ -1,5 +1,8 @@
 using Project.Scripts.Weapons;
 using System.Collections.Generic;
+using Project.Scripts.Animations.Character;
+using Project.Scripts.Animations.Enemy;
+using Project.Scripts.Audio;
 using Project.Scripts.HealthInfo;
 using UnityEngine;
 using Project.Scripts.Enemy;
@@ -40,15 +43,17 @@ namespace Project.Scripts.Enemies
                 Weapon<StoneCannonConfig> enemyWeapon = _weaponFactory.CreateEnemyWeapon(stoneCannonSpawnPoints);
                 data.Config.StartingWeaponConfig = enemyWeapon;
                 Health enemyHealth = new(data.Config.MaxHealth, enemyObject.gameObject);
+                EntityAnimatorProvider animatorProvider = enemyObject.GetComponentInChildren<EntityAnimatorProvider>();
+                IEnemyAnimator animator = new EnemyAnimator(animatorProvider.Animator);
                 EnemyModel enemy;
 
                 if (data.Config is EnemyStoneConfig stoneConfig)
                 {
-                    enemy = new StoneEnemy(stoneConfig, _sceneData, enemyWeapon, enemyHealth, _audioManager);
+                    enemy = new StoneEnemy(stoneConfig, _sceneData, enemyWeapon, enemyHealth, _audioManager,animator);
                 }
                 else
                 {
-                    enemy = new EnemyModel(data.Config, enemyWeapon, enemyHealth, data.Config.EXP, _audioManager);
+                    enemy = new EnemyModel(data.Config, enemyWeapon, enemyHealth, data.Config.EXP, _audioManager, animator, enemyObject);
                 }
 
                 if (enemy is IPausable pausable)

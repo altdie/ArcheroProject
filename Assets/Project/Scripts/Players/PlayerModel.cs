@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Project.Scripts.Animations.Character;
 using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
 using Project.Scripts.Players;
@@ -35,10 +36,12 @@ namespace Project.Scripts.PlayerModels
         public Weapon<BowConfig> CurrentWeapon;
         public PlayerMovement PlayerMovement { get; }
         private readonly Joystick _joystick;
+        private readonly ICharacterAnimator _animator;
         public event Action OnDeath;
         public event Action OnExperienceChanged;
 
-        public PlayerModel(Health playerHealth, int speed, Weapon<BowConfig> currentWeapon, PlayerMovement playerMovement, Joystick joystick, int experience, int level, bool isAdsRemoved, int lastSave)
+        public PlayerModel(Health playerHealth, int speed, Weapon<BowConfig> currentWeapon, PlayerMovement playerMovement, 
+            Joystick joystick, int experience, int level, bool isAdsRemoved, int lastSave, ICharacterAnimator animator)
         {
             PlayerHealth = playerHealth;
             Speed = speed;
@@ -49,6 +52,7 @@ namespace Project.Scripts.PlayerModels
             Level = level;
             IsAdsRemoved = isAdsRemoved;
             LastSave = lastSave;
+            _animator = animator;
         }
 
         public void SubscribeOnHealthChanged()
@@ -77,8 +81,8 @@ namespace Project.Scripts.PlayerModels
 
             while (_isAttacking)
             {
+                _animator?.PlayAttack();
                 CurrentWeapon.InstantAttack();
-
                 await Task.Delay(ATTACK_DELAY);
             }
         }
@@ -102,6 +106,9 @@ namespace Project.Scripts.PlayerModels
         {
             Move();
         }
+        
+        public void PlayWalk() => _animator?.PlayWalk();
+        public void StopWalk() => _animator?.StopWalk();
 
         private void OnHealthChanged(float healthRatio)
         {

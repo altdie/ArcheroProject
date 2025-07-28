@@ -1,7 +1,5 @@
 ﻿using Project.Scripts.Firebase;
 using Project.Scripts.GameFlowScripts;
-using Project.Scripts.Players;
-using UnityEngine;
 using Zenject;
 
 namespace Project.Scripts.Installers

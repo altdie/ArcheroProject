@@ -22,7 +22,7 @@ namespace Project.Scripts.BulletFactoryEnemy
             return bullet;
         }
 
-        private void ReturnToPool(BulletModel.Bullet bullet)
+        private void ReturnToPool(Bullet bullet)
         {
             bullet.gameObject.SetActive(false);
             _bulletPool.ReturnBullet(bullet);

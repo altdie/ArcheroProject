@@ -1,35 +1,36 @@
-using Project.Scripts.UI;
-
-public class PlayerStatsUIPresenter
+namespace Project.Scripts.UI
 {
-    private readonly PlayerStatsUIModel _uiModel;
-    private readonly PlayerStatsUIView _uiView;
-
-    public PlayerStatsUIPresenter(PlayerStatsUIModel uiModel, PlayerStatsUIView uiView)
+    public class PlayerStatsUIPresenter
     {
-        _uiModel = uiModel;
-        _uiView = uiView;
-    }
+        private readonly PlayerStatsUIModel _uiModel;
+        private readonly PlayerStatsUIView _uiView;
 
-    public void Initialize()
-    {
-        _uiModel.PlayerModel.OnExperienceChanged += UpdateView;
-        UpdateView();
-    }
+        public PlayerStatsUIPresenter(PlayerStatsUIModel uiModel, PlayerStatsUIView uiView)
+        {
+            _uiModel = uiModel;
+            _uiView = uiView;
+        }
 
-    public void UpdateView()
-    {
-        _uiView.SetLevelText("Level: " + _uiModel.Level);
+        public void Initialize()
+        {
+            _uiModel.PlayerModel.OnExperienceChanged += UpdateView;
+            UpdateView();
+        }
 
-        float progress = 0f;
-        if (_uiModel.MaxExperience > 0)
-            progress = _uiModel.Experience / _uiModel.MaxExperience;
+        public void UpdateView()
+        {
+            _uiView.SetLevelText("Level: " + _uiModel.Level);
 
-        _uiView.SetExperienceProgress(progress);
-    }
+            float progress = 0f;
+            if (_uiModel.MaxExperience > 0)
+                progress = _uiModel.Experience / _uiModel.MaxExperience;
 
-    public void Dispose()
-    {
-         _uiModel.PlayerModel.OnExperienceChanged -= UpdateView;
+            _uiView.SetExperienceProgress(progress);
+        }
+
+        public void Dispose()
+        {
+            _uiModel.PlayerModel.OnExperienceChanged -= UpdateView;
+        }
     }
 }

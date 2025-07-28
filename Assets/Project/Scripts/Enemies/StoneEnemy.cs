@@ -1,3 +1,5 @@
+using Project.Scripts.Animations.Enemy;
+using Project.Scripts.Audio;
 using Project.Scripts.Enemies;
 using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
@@ -10,14 +12,13 @@ namespace Project.Scripts.Enemy
     {
         private readonly MonoBehaviour _coroutineRunner;
         private Coroutine _attackCoroutine;
-        private readonly AudioManager _audioManager;
 
-        public StoneEnemy(EnemyStoneConfig config, SceneData coroutineRunner, Weapon<StoneCannonConfig> weapon, Health health, AudioManager audioManager)
-            : base(config, weapon, health, config.EXP, audioManager)
+        public StoneEnemy(EnemyStoneConfig config, SceneData coroutineRunner, Weapon<StoneCannonConfig> weapon, Health health, 
+            AudioManager audioManager, IEnemyAnimator animator)
+            : base(config, weapon, health, config.EXP, audioManager, animator, coroutineRunner )
         {
             _coroutineRunner = coroutineRunner;
             StartAttack();
-            _audioManager = audioManager;
         }
 
         private void StartAttack()

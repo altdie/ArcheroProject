@@ -1,8 +1,11 @@
 using System;
 
-public interface IPurchaser
+namespace Project.Scripts.Purchaser
 {
-    event Action<string> OnPurchaseCompleted;
-    void Init();
-    void Buy(string productId);
+    public interface IPurchaser
+    {
+        event Action<string> OnPurchaseCompleted;
+        void Init();
+        void Buy(string productId);
+    }
 }

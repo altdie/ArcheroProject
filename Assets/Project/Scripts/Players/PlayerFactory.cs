@@ -4,11 +4,11 @@ using Project.Scripts.Player;
 using Project.Scripts.PlayerModels;
 using Project.Scripts.Weapons;
 using UnityEngine;
-using System.Threading.Tasks;
 using Project.Scripts.Addressables;
 using Project.Scripts.GameFlowScripts;
 using Zenject;
 using Cysharp.Threading.Tasks;
+using Project.Scripts.Animations.Character;
 
 namespace Project.Scripts.Players
 {
@@ -20,7 +20,12 @@ namespace Project.Scripts.Players
         private readonly PlayerPrefsSave _playerPrefsSave;
         private readonly DiContainer _container;
 
-        public PlayerFactory(WeaponFactory weaponFactory, SceneData sceneData, IAssetProvider assetProvider, PlayerPrefsSave playerPrefsSave, DiContainer container)
+        public PlayerFactory(
+            WeaponFactory weaponFactory,
+            SceneData sceneData,
+            IAssetProvider assetProvider,
+            PlayerPrefsSave playerPrefsSave,
+            DiContainer container)
         {
             _weaponFactory = weaponFactory;
             _sceneData = sceneData;
@@ -32,22 +37,39 @@ namespace Project.Scripts.Players
         public async UniTask<PlayerModel> CreatePlayerAsync(PlayerSpawnPoint spawnPosition, int initialHealth, Joystick joystick)
         {
             GameObject playerPrefab = await _assetProvider.CreatePlayerPrefabAsync();
-            PlayerMovement playerMovement = Object.Instantiate(playerPrefab, spawnPosition.transform.position, Quaternion.identity).GetComponent<PlayerMovement>();
-
+            GameObject playerObj = Object.Instantiate(playerPrefab, spawnPosition.transform.position, Quaternion.identity);
+            PlayerMovement playerMovement = playerObj.GetComponent<PlayerMovement>();
+            EntityAnimatorProvider animatorProvider = playerObj.GetComponentInChildren<EntityAnimatorProvider>();
+            ICharacterAnimator characterAnimator = new CharacterAnimator(animatorProvider.Animator);
+            
             var playerInput = new PlayerInputHandler(joystick);
             var weapon = _weaponFactory.CreateWeapon(playerMovement.weaponTransformPrefab);
             var health = new Health(initialHealth, playerMovement.gameObject);
             var playerSaveData = _playerPrefsSave.Load();
-            var player = new PlayerModel(health, 10, weapon, playerMovement, playerInput.Joystick, playerSaveData.Experience, playerSaveData.Level, playerSaveData.IsAdsRemoved, playerSaveData.LastSaved);
-            player.SubscribeOnHealthChanged();
+            var player = new PlayerModel(
+                health,
+                10,
+                weapon,
+                playerMovement,
+                playerInput.Joystick,
+                playerSaveData.Experience,
+                playerSaveData.Level,
+                playerSaveData.IsAdsRemoved,
+                playerSaveData.LastSaved,
+                characterAnimator);
 
+            player.SubscribeOnHealthChanged();
+            
             PlayerView playerView = playerMovement.GetComponent<PlayerView>();
             playerView.Initialize(player);
             playerView.SubscribeToModel();
+            
             playerMovement.Initialize(player, playerInput, health, _sceneData, playerSaveData.Experience);
             playerMovement.SetupHealthUI();
             playerMovement.Subscribe();
+            
             player.SetWeapon(weapon);
+            
             _container.Inject(player);
             _container.Resolve<TickableManager>().Add(player);
 

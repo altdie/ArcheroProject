@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using Project.Scripts.GameFlowScripts;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -20,7 +18,7 @@ namespace Project.Scripts.Auth
             }
             catch (AuthenticationException ex)
             {
-                Debug.LogError("Авторизация не удалась: " + ex.Message);
+                Debug.LogError("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: " + ex.Message);
             }
         }
     }

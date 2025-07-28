@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Project.Scripts.Purchasers
+namespace Project.Scripts.Purchaser
 {
     public class PurchaseView : MonoBehaviour
     {

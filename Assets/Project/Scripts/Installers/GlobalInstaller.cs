@@ -1,7 +1,6 @@
 using Project.Scripts.Auth;
 using Project.Scripts.Players;
 using Project.Scripts.SaveSystem;
-using UnityEngine;
 using Zenject;
 
 namespace Project.Scripts.Installers

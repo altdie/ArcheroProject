@@ -1,12 +1,11 @@
-using UnityEngine.Purchasing;
 using System;
+using Cysharp.Threading.Tasks;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
-using System.Threading.Tasks;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
+using UnityEngine.Purchasing;
 
-namespace Project.Scripts.Purchasers
+namespace Project.Scripts.Purchaser
 {
     public class UnityIAPPurchaser : IStoreListener, IPurchaser
     {

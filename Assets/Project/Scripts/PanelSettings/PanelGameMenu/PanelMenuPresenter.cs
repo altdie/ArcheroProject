@@ -1,45 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
-using Project.Scripts.PanelSettings;
-using UnityEngine;
 using Zenject;
 
-public class PanelMenuPresenter : IInitializable
+namespace Project.Scripts.PanelSettings.PanelGameMenu
 {
-    private readonly PanelMenuView _view;
-    private readonly PanelMenuModel _model;
-
-    public PanelMenuPresenter(PanelMenuView view, PanelMenuModel model)
+    public class PanelMenuPresenter : IInitializable
     {
-        _view = view;
-        _model = model;
-    }
+        private readonly PanelMenuView _view;
+        private readonly PanelMenuModel _model;
 
-    public void Initialize()
-    {
-        SubscribeOnClick();
-    }
+        public PanelMenuPresenter(PanelMenuView view, PanelMenuModel model)
+        {
+            _view = view;
+            _model = model;
+        }
 
-    public void SubscribeOnClick()
-    {
-        _view.RemoveADSClicked += OnRemoveADSClicked;
-        _view.StartGameClicked += OnStartGameClicked;
-    }
+        public void Initialize()
+        {
+            SubscribeOnClick();
+        }
 
-    private void OnRemoveADSClicked()
-    {
-       _model.RemoveADS();
-    }
+        public void SubscribeOnClick()
+        {
+            _view.RemoveADSClicked += OnRemoveADSClicked;
+            _view.StartGameClicked += OnStartGameClicked;
+        }
 
-    private void OnStartGameClicked()
-    {
-        _model.StartGame();
-        Dispose();
-    }
+        private void OnRemoveADSClicked()
+        {
+            _model.RemoveADS();
+        }
 
-    public void Dispose()
-    {
-        _view.RemoveADSClicked -= OnRemoveADSClicked;
-        _view.StartGameClicked -= OnStartGameClicked;
+        private void OnStartGameClicked()
+        {
+            _model.StartGame();
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            _view.RemoveADSClicked -= OnRemoveADSClicked;
+            _view.StartGameClicked -= OnStartGameClicked;
+        }
     }
 }

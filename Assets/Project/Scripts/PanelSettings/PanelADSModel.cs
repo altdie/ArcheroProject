@@ -2,8 +2,6 @@ using System;
 using Cysharp.Threading.Tasks;
 using Project.Scripts.ADS;
 using Project.Scripts.GameFlowScripts;
-using Project.Scripts.SaveSystem;
-using UnityEngine.SceneManagement;
 
 namespace Project.Scripts.PanelSettings
 {

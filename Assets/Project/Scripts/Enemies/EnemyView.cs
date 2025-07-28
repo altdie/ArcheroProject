@@ -31,7 +31,7 @@ namespace Project.Scripts.Enemies
             _enemyModel.OnDeath += Die;
         }
 
-        public void Unsubscribe()
+        private void Unsubscribe()
         {
             _health.OnHealthChanged -= UpdateHealthBar;
             _enemyModel.OnDeath -= Die;

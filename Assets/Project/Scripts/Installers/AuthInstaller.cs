@@ -1,8 +1,7 @@
-using System.ComponentModel;
 using Project.Scripts.GameFlowScripts;
+using Project.Scripts.PanelSettings.PanelGameMenu;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Project.Scripts.Auth
