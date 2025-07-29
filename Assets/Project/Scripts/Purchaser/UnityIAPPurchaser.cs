@@ -4,11 +4,12 @@ using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
 using UnityEngine.Purchasing;
+using UnityEngine.Purchasing.Extension;
 using Zenject;
 
 namespace Project.Scripts.Purchaser
 {
-    public class UnityIAPPurchaser : IStoreListener, IPurchaser, IInitializable
+    public class UnityIAPPurchaser : IStoreListener, IPurchaser, IInitializable, IDetailedStoreListener
     {
         private const string PRODUCTION = "production";
         private IStoreController _controller;
@@ -22,12 +23,7 @@ namespace Project.Scripts.Purchaser
 
         public void Initialize()
         {
-            InitializeAsync().Forget();
-        }
-
-        private async UniTask InitializeAsync()
-        {
-            await InitializeUGSAndIAP();
+            InitializeUGSAndIAP().Forget();
         }
 
         private async UniTask InitializeUGSAndIAP()
@@ -77,6 +73,11 @@ namespace Project.Scripts.Purchaser
         public void OnInitializeFailed(InitializationFailureReason error, string message)
         {
             Debug.LogError($"[Purchaser] IAP Initialization Failed: {error}, Message: {message}");
+        }
+
+        public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
+        {
+            
         }
     }
 }
