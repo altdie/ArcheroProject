@@ -9,10 +9,9 @@ namespace Project.Scripts.PanelSettings.PanelGameMenu
     {
         [SerializeField] private Button _startGameButton;
         [SerializeField] private Button _removeAdsButton;
-        [SerializeField] private TextMeshProUGUI _logText;
 
         public event Action StartGameClicked;
-        public event Action RemoveADSClicked;
+        public event Action RemoveAdsClicked;
 
         public void Awake()
         {
@@ -33,7 +32,7 @@ namespace Project.Scripts.PanelSettings.PanelGameMenu
 
         private void OnRemoveADSClicked()
         {
-            RemoveADSClicked?.Invoke();
+            RemoveAdsClicked?.Invoke();
         }
     }
 }

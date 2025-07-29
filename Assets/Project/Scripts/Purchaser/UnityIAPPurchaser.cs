@@ -4,17 +4,28 @@ using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
 using UnityEngine.Purchasing;
+using Zenject;
 
 namespace Project.Scripts.Purchaser
 {
-    public class UnityIAPPurchaser : IStoreListener, IPurchaser
+    public class UnityIAPPurchaser : IStoreListener, IPurchaser, IInitializable
     {
-        private const string REMOVE_ADD_PRODUCT = "REMOVEADS";
         private const string PRODUCTION = "production";
         private IStoreController _controller;
+        private readonly PurchaseConfig _config;
         public event Action<string> OnPurchaseCompleted;
 
-        public async void Init()
+        public UnityIAPPurchaser(PurchaseConfig config)
+        {
+            _config = config;
+        }
+
+        public void Initialize()
+        {
+            InitializeAsync().Forget();
+        }
+
+        private async UniTask InitializeAsync()
         {
             await InitializeUGSAndIAP();
         }
@@ -27,7 +38,7 @@ namespace Project.Scripts.Purchaser
                 await UnityServices.InitializeAsync(options);
 
                 var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
-                builder.AddProduct(REMOVE_ADD_PRODUCT, ProductType.NonConsumable);
+                builder.AddProduct(_config.RemoveAdsProductId, ProductType.NonConsumable);
                 UnityPurchasing.Initialize(this, builder);
             }
             catch (Exception e)

@@ -5,16 +5,17 @@ namespace Project.Scripts.GameFlowScripts
 {
     public class SceneLoader
     {
+        private const string GAMEPLAY_SCENE_NAME = "StartSceneTest";
+        
         public void ReloadScene()
         {
             string currentSceneName = SceneManager.GetActiveScene().name;
             SceneManager.LoadScene(currentSceneName);
-            Time.timeScale = 1.0f;
         }
 
         public void StartGame()
         {
-            SceneManager.LoadScene("StartSceneTest");
+            SceneManager.LoadScene(GAMEPLAY_SCENE_NAME);
         }
     }
 }

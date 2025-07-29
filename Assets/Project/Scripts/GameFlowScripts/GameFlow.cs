@@ -10,7 +10,6 @@ using Project.Scripts.Firebase;
 using Project.Scripts.Installers;
 using Project.Scripts.NextLevel;
 using Project.Scripts.PanelSettings;
-using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
 using Project.Scripts.SaveSystem;
 using Project.Scripts.UI;
@@ -85,8 +84,13 @@ namespace Project.Scripts.GameFlowScripts
             _authManager = authManager;
             _audioManager = audioManager;
         }
+        
+        public void Initialize()
+        {
+            InitializeAsyncGlobal().Forget();
+        }
 
-        public async void Initialize()
+        private async UniTask  InitializeAsyncGlobal()
         {
             await InitializeAsync();
             _adsInitializer.InitializeAds();
@@ -105,7 +109,7 @@ namespace Project.Scripts.GameFlowScripts
 
             foreach (var enemy in _enemyFactory.Enemies)
             {
-                enemy.OnDeath += () => RemoveEnemy(enemy).Forget();
+                enemy.SubscribeOnDeath(() => RemoveEnemy(enemy).Forget());;
             }
 
             _enemies = _enemyFactory.Enemies;
@@ -114,21 +118,25 @@ namespace Project.Scripts.GameFlowScripts
             _playerStatsUIPresenter.Initialize();
             _player.OnDeath += OnPlayerDeath;
 
-            await _authManager.InitializeAsync();
-            await LoadPlayerDataAsync(_token);
-            await _saveSelection.InitializeAsync();
+            var authTask = _authManager.InitializeAsync();
+            var loadDataTask = LoadPlayerDataAsync(_token);
+            var saveInitTask = _saveSelection.InitializeAsync();
+            
+            await UniTask.WhenAll(authTask, loadDataTask, saveInitTask);
         }
 
         private async UniTask LoadPlayerDataAsync(CancellationToken token)
         {
-            PlayerDataSave savedData = await _saveSelection.LoadAsync();
+            token.ThrowIfCancellationRequested();
+            PlayerDataSave savedData = await _saveSelection.LoadAsync(token);
+            token.ThrowIfCancellationRequested();
             _player.Experience = savedData.Experience;
             _player.IsAdsRemoved = savedData.IsAdsRemoved;
-            token.ThrowIfCancellationRequested();
         }
 
         private async UniTaskVoid RemoveEnemy(EnemyModel enemy)
         {
+            enemy.UnsubscribeFromDeath();
             _enemies.Remove(enemy);
             _player.PlayerMovement.AddExperience(enemy.EXP);
 

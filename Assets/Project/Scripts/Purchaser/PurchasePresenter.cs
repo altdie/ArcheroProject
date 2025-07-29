@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Project.Scripts.Players;
 using Zenject;
 
@@ -6,24 +7,23 @@ namespace Project.Scripts.Purchaser
 {
     public class PurchasePresenter : IInitializable, IDisposable
     {
-        private const string REMOVE_ADD_PRODUCT = "REMOVEADS";
         private readonly IPurchaser _purchaser;
         private readonly PurchaseView _view;
         private readonly PlayerPrefsSave _save;
+        private readonly PurchaseConfig _purchaseConfig;
 
-        public PurchasePresenter(IPurchaser purchaser, PurchaseView view, PlayerPrefsSave save)
+        public PurchasePresenter(IPurchaser purchaser, PurchaseView view, PlayerPrefsSave save, PurchaseConfig purchaseConfig)
         {
             _purchaser = purchaser;
             _view = view;
             _save = save;
+            _purchaseConfig = purchaseConfig;
         }
 
         public void Initialize()
         {
             _purchaser.OnPurchaseCompleted += OnPurchaseSuccess;
             _view.OnBuyClicked += OnBuyClicked;
-
-            _purchaser.Init();
         }
 
         public void Dispose()
@@ -34,12 +34,12 @@ namespace Project.Scripts.Purchaser
 
         private void OnBuyClicked()
         {
-            _purchaser.Buy(REMOVE_ADD_PRODUCT);
+            _purchaser.Buy(_purchaseConfig.RemoveAdsProductId);
         }
 
         private void OnPurchaseSuccess(string productId)
         {
-            if (productId == REMOVE_ADD_PRODUCT)
+            if (productId == _purchaseConfig.RemoveAdsProductId)
             {
                 var data = _save.Load();
                 data.IsAdsRemoved = true;

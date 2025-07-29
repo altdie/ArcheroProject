@@ -1,18 +1,16 @@
 using Project.Scripts.GameFlowScripts;
-using TMPro;
 using Unity.Services.Authentication;
+using UnityEngine;
 
 namespace Project.Scripts.PanelSettings.PanelGameMenu
 {
     public class PanelMenuModel
     {
         private readonly SceneLoader _sceneLoader;
-        private TextMeshProUGUI _logTxt;
 
-        public PanelMenuModel(SceneLoader sceneLoader, TextMeshProUGUI logTxt)
+        public PanelMenuModel(SceneLoader sceneLoader)
         {
             _sceneLoader = sceneLoader;
-            _logTxt = logTxt;
         }
 
         public void StartGame()
@@ -20,9 +18,9 @@ namespace Project.Scripts.PanelSettings.PanelGameMenu
             _sceneLoader.StartGame();
         }
 
-        public void RemoveADS()
+        public void RemoveAds()
         {
-            _logTxt.text = "Player id:" + AuthenticationService.Instance.PlayerId;
+            Debug.Log(AuthenticationService.Instance.PlayerId);
         }
     }
 }

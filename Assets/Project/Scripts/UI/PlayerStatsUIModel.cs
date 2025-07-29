@@ -1,4 +1,4 @@
-using Project.Scripts.PlayerModels;
+using Project.Scripts.Players;
 
 namespace Project.Scripts.UI
 {

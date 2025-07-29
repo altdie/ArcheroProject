@@ -1,7 +1,5 @@
 ﻿using Project.Scripts.Enemies;
 using Project.Scripts.HealthInfo;
-using Project.Scripts.Player;
-using Project.Scripts.PlayerModels;
 using Project.Scripts.Weapons;
 using UnityEngine;
 using Project.Scripts.Addressables;
@@ -39,8 +37,6 @@ namespace Project.Scripts.Players
             GameObject playerPrefab = await _assetProvider.CreatePlayerPrefabAsync();
             GameObject playerObj = Object.Instantiate(playerPrefab, spawnPosition.transform.position, Quaternion.identity);
             PlayerMovement playerMovement = playerObj.GetComponent<PlayerMovement>();
-            EntityAnimatorProvider animatorProvider = playerObj.GetComponentInChildren<EntityAnimatorProvider>();
-            ICharacterAnimator characterAnimator = new CharacterAnimator(animatorProvider.Animator);
             
             var playerInput = new PlayerInputHandler(joystick);
             var weapon = _weaponFactory.CreateWeapon(playerMovement.weaponTransformPrefab);
@@ -55,13 +51,14 @@ namespace Project.Scripts.Players
                 playerSaveData.Experience,
                 playerSaveData.Level,
                 playerSaveData.IsAdsRemoved,
-                playerSaveData.LastSaved,
-                characterAnimator);
+                playerSaveData.LastSaved);
 
             player.SubscribeOnHealthChanged();
             
             PlayerView playerView = playerMovement.GetComponent<PlayerView>();
-            playerView.Initialize(player);
+            EntityAnimatorProvider animatorProvider = playerObj.GetComponentInChildren<EntityAnimatorProvider>();
+            ICharacterAnimator characterAnimator = new CharacterAnimator(animatorProvider.Animator);
+            playerView.Initialize(player, characterAnimator);
             playerView.SubscribeToModel();
             
             playerMovement.Initialize(player, playerInput, health, _sceneData, playerSaveData.Experience);

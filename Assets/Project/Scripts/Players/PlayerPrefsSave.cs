@@ -1,5 +1,4 @@
-﻿using Project.Scripts.PlayerModels;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Project.Scripts.Players
 {

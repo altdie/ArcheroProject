@@ -12,12 +12,17 @@ namespace Project.Scripts.Purchaser
 
         private void Awake()
         {
-            _buyButton.onClick.AddListener(() => OnBuyClicked?.Invoke());
+            _buyButton.onClick.AddListener(OnBuyButtonClicked);
         }
 
         private void OnDestroy()
         {
-            _buyButton.onClick.RemoveAllListeners();
+            _buyButton.onClick.RemoveListener(OnBuyButtonClicked);
+        }
+
+        private void OnBuyButtonClicked()
+        {
+            OnBuyClicked?.Invoke();
         }
     }
 }

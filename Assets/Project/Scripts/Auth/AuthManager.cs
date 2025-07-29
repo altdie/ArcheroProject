@@ -18,7 +18,7 @@ namespace Project.Scripts.Auth
             }
             catch (AuthenticationException ex)
             {
-                Debug.LogError("����������� �� �������: " + ex.Message);
+                Debug.LogError("Authentication failed: " + ex.Message);
             }
         }
     }

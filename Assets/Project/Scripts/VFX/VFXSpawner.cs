@@ -1,15 +1,17 @@
 using UnityEngine;
 
-public class VFXSpawner : MonoBehaviour
+namespace Project.Scripts.VFX
 {
-    [SerializeField] private ParticleSystem _enemyDestroyedEffectPrefab;
-
-    public void SpawnEffect(Vector3 position)
+    public class VFXSpawner : MonoBehaviour
     {
-        var vfx = Instantiate(_enemyDestroyedEffectPrefab, position, Quaternion.identity);
-        var ps = vfx.GetComponent<ParticleSystem>();
-        ps.Play();
-        Destroy(vfx, ps.main.duration);
+        [SerializeField] private ParticleSystem _enemyDestroyedEffectPrefab;
+
+        public void SpawnEffect(Vector3 position)
+        {
+            var ps = Instantiate(_enemyDestroyedEffectPrefab, position, Quaternion.identity);
+            ps.Play();
+            Destroy(ps.gameObject, ps.main.duration);
+        }
     }
 }
 

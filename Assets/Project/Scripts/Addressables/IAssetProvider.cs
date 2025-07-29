@@ -10,6 +10,5 @@ namespace Project.Scripts.Addressables
         UniTask<GameObject> CreatePlayerPrefabAsync();
         UniTask<PanelView> CreatePanelPrefabFreeLifeAsync();
         UniTask<PanelView> CreatePanelPrefabEndGameAsync();
-        UniTask<Button> CreateRewardAdsbAsync();
     }
 }

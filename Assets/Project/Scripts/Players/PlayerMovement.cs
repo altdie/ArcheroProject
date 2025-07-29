@@ -1,7 +1,5 @@
 ﻿using Project.Scripts.Enemies;
 using Project.Scripts.HealthInfo;
-using Project.Scripts.Player;
-using Project.Scripts.PlayerModels;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -56,17 +54,18 @@ namespace Project.Scripts.Players
 
             if (isCurrentlyMoving && !_isMoving)
             {
-                _player.PlayWalk();
                 _player.StopAttacking();
+                _player.TriggerWalk();
             }
             else if (!isCurrentlyMoving && _isMoving)
             {
-                _player.StopWalk();
+                _player.TriggerStopWalk();
                 _nearestEnemy = FindNearestEnemy();
                 if (_nearestEnemy != null)
                 {
                     RotateToEnemy();
                     _player.StartAttack();
+                    _player.TriggerAttack();
                 }
             }
 

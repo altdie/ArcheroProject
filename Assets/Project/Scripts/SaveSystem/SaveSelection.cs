@@ -1,6 +1,5 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Project.Scripts.PlayerModels;
 using Project.Scripts.Players;
 using Unity.Services.Core;
 
@@ -28,10 +27,12 @@ namespace Project.Scripts.SaveSystem
             _localSave.Save(data);
         }
 
-        public async UniTask<PlayerDataSave> LoadAsync()
+        public async UniTask<PlayerDataSave> LoadAsync(CancellationToken token)
         {
             var localData = _localSave.Load();
             var cloudData = await _cloudSave.LoadFromCloud();
+            
+            token.ThrowIfCancellationRequested();
 
             if (cloudData.LastSaved > localData.LastSaved)
             {

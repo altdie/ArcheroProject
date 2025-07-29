@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Project.Scripts.Animations.Character;
 using Project.Scripts.GameFlowScripts;
 using Project.Scripts.HealthInfo;
-using Project.Scripts.Players;
 using Project.Scripts.Weapons;
 using Zenject;
 
-namespace Project.Scripts.PlayerModels
+namespace Project.Scripts.Players
 {
     public class PlayerModel : IPausable, ITickable
     {
@@ -29,19 +29,21 @@ namespace Project.Scripts.PlayerModels
         public int Level { get; set; }
         public bool IsAdsRemoved { get; set; }
         public int LastSave { get; set; }
-        public int Speed = 5; // test 
+        public readonly int Speed = 5;
         private bool _isAttacking;
 
         public Health PlayerHealth { get; private set; }
         public Weapon<BowConfig> CurrentWeapon;
         public PlayerMovement PlayerMovement { get; }
         private readonly Joystick _joystick;
-        private readonly ICharacterAnimator _animator;
         public event Action OnDeath;
         public event Action OnExperienceChanged;
+        public event Action OnAttack;
+        public event Action OnWalk;
+        public event Action OnStopWalk;
 
         public PlayerModel(Health playerHealth, int speed, Weapon<BowConfig> currentWeapon, PlayerMovement playerMovement, 
-            Joystick joystick, int experience, int level, bool isAdsRemoved, int lastSave, ICharacterAnimator animator)
+            Joystick joystick, int experience, int level, bool isAdsRemoved, int lastSave)
         {
             PlayerHealth = playerHealth;
             Speed = speed;
@@ -52,7 +54,6 @@ namespace Project.Scripts.PlayerModels
             Level = level;
             IsAdsRemoved = isAdsRemoved;
             LastSave = lastSave;
-            _animator = animator;
         }
 
         public void SubscribeOnHealthChanged()
@@ -60,7 +61,7 @@ namespace Project.Scripts.PlayerModels
             PlayerHealth.OnHealthChanged += OnHealthChanged;
         }
 
-        public void Move()
+        private void Move()
         {
             PlayerMovement.Move();
         }
@@ -81,7 +82,6 @@ namespace Project.Scripts.PlayerModels
 
             while (_isAttacking)
             {
-                _animator?.PlayAttack();
                 CurrentWeapon.InstantAttack();
                 await Task.Delay(ATTACK_DELAY);
             }
@@ -107,9 +107,6 @@ namespace Project.Scripts.PlayerModels
             Move();
         }
         
-        public void PlayWalk() => _animator?.PlayWalk();
-        public void StopWalk() => _animator?.StopWalk();
-
         private void OnHealthChanged(float healthRatio)
         {
             if (PlayerHealth.IsDead)
@@ -117,5 +114,9 @@ namespace Project.Scripts.PlayerModels
                 OnDeath?.Invoke();
             }
         }
+        
+        public void TriggerAttack() => OnAttack?.Invoke();
+        public void TriggerWalk() => OnWalk?.Invoke();
+        public void TriggerStopWalk() => OnStopWalk?.Invoke();
     }
 }

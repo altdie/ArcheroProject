@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Project.Scripts.Player
+namespace Project.Scripts.Players
 {
     public class PlayerInputHandler
     {

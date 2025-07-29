@@ -4,12 +4,10 @@ using TMPro;
 using UnityEngine;
 using Zenject;
 
-namespace Project.Scripts.Auth
+namespace Project.Scripts.Installers
 {
     public class AuthInstaller : MonoInstaller
     {
-        [SerializeField] private TextMeshProUGUI _text;
-
         public override void InstallBindings()
         {
             BindManager();
@@ -24,7 +22,7 @@ namespace Project.Scripts.Auth
         private void BindMenuPanel()
         {
             Container.Bind<PanelMenuView>().FromComponentInHierarchy().AsSingle();
-            Container.Bind<PanelMenuModel>().AsSingle().WithArguments(_text);
+            Container.Bind<PanelMenuModel>().AsSingle();
             Container.BindInterfacesAndSelfTo<PanelMenuPresenter>().AsSingle();
         }
     }

@@ -22,6 +22,7 @@ namespace Project.Scripts.Enemies
         private Coroutine _attackRoutine;
 
         public event Action OnDeath;
+        private Action _onDeathCallback;
 
         public EnemyModel(
             EnemyConfig config,
@@ -41,6 +42,18 @@ namespace Project.Scripts.Enemies
             _coroutineRunner = coroutineRunner;
 
             EnemyHealth.OnHealthChanged += OnHealthChanged;
+        }
+        
+        public void SubscribeOnDeath(Action callback)
+        {
+            _onDeathCallback = callback;
+            OnDeath += _onDeathCallback;
+        }
+        
+        public void UnsubscribeFromDeath()
+        {
+            OnDeath -= _onDeathCallback;
+            _onDeathCallback = null;
         }
 
         private void OnHealthChanged(float healthRatio)

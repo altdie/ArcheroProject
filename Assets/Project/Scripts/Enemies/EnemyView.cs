@@ -1,5 +1,6 @@
 ﻿using System;
 using Project.Scripts.HealthInfo;
+using Project.Scripts.VFX;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,11 +8,9 @@ namespace Project.Scripts.Enemies
 {
     public class EnemyView : MonoBehaviour
     {
-        public event Action OnEntityDeath;
-
         public Transform[] WeaponTransform;
         [SerializeField] private Slider _healthBar;
-        [SerializeField] public VFXSpawner _vfxSpawner;
+        [SerializeField] private VFXSpawner _vfxSpawner;
 
         private EnemyModel _enemyModel;
         private Health _health;
@@ -55,7 +54,6 @@ namespace Project.Scripts.Enemies
         private void Die()
         {
             _vfxSpawner.SpawnEffect(transform.position);
-            OnEntityDeath?.Invoke();
             Destroy(gameObject);
         }
     }

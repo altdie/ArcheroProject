@@ -18,15 +18,15 @@ namespace Project.Scripts.PanelSettings.PanelGameMenu
             SubscribeOnClick();
         }
 
-        public void SubscribeOnClick()
+        private void SubscribeOnClick()
         {
-            _view.RemoveADSClicked += OnRemoveADSClicked;
+            _view.RemoveAdsClicked += OnRemoveADSClicked;
             _view.StartGameClicked += OnStartGameClicked;
         }
 
         private void OnRemoveADSClicked()
         {
-            _model.RemoveADS();
+            _model.RemoveAds();
         }
 
         private void OnStartGameClicked()
@@ -35,9 +35,9 @@ namespace Project.Scripts.PanelSettings.PanelGameMenu
             Dispose();
         }
 
-        public void Dispose()
+        private void Dispose()
         {
-            _view.RemoveADSClicked -= OnRemoveADSClicked;
+            _view.RemoveAdsClicked -= OnRemoveADSClicked;
             _view.StartGameClicked -= OnStartGameClicked;
         }
     }
