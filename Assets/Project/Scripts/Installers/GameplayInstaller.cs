@@ -71,6 +71,7 @@ namespace Project.Scripts.Installers
 
         private void BindUI()
         {
+            Container.Bind<UIFlow>().AsSingle();
             Container.Bind<AdsInitializer>().AsSingle();
             Container.Bind<InterstitialAds>().AsSingle();
             Container.Bind<RewardedAds>().AsSingle();
@@ -89,6 +90,8 @@ namespace Project.Scripts.Installers
             Container.Bind<IAssetProvider>().To<AssetProvider>().AsSingle();
             Container.Bind<TimeService>().AsSingle();
             Container.Bind<IAnalyticsService>().To<FirebaseAnalyticsService>().AsSingle();
+            Container.Bind<PlayerLifecycle>().AsSingle();
+            Container.Bind<EnemyLifecycleManager>().AsSingle();
         }
 
         private void BindGameLogic()

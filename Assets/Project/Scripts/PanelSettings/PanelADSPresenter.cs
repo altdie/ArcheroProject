@@ -29,7 +29,7 @@
             Dispose();
         }
 
-        private void Dispose()
+        public void Dispose()
         {
             _view.ReloadGameClicked -= OnReloadClicked;
             _view.RewardedAdsClicked -= OnFreeLifeClicked;
