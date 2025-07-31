@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Project.Scripts.Purchaser
 {
-    public class UnityIAPPurchaser : IStoreListener, IPurchaser, IInitializable, IDetailedStoreListener
+    public class UnityIAPPurchaser : IPurchaser, IInitializable, IDetailedStoreListener
     {
         private const string PRODUCTION = "production";
         private IStoreController _controller;
@@ -54,16 +54,21 @@ namespace Project.Scripts.Purchaser
 
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
+            Debug.Log("[Purchaser] IAP successfully initialized.");
             _controller = controller;
         }
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
+            Debug.Log($"[Purchaser] Purchase successful: {args.purchasedProduct.definition.id}");
             OnPurchaseCompleted?.Invoke(args.purchasedProduct.definition.id);
             return PurchaseProcessingResult.Complete;
         }
 
-        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason) { }
+        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+        {
+            Debug.LogWarning($"[Purchaser] Purchase failed: {product.definition.id}, Reason: {failureReason}");
+        }
 
         public void OnInitializeFailed(InitializationFailureReason error)
         {
@@ -77,7 +82,7 @@ namespace Project.Scripts.Purchaser
 
         public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
         {
-            
+            Debug.LogWarning($"[Purchaser] Purchase failed: {product.definition.id}, Reason: {failureDescription.reason}, Message: {failureDescription.message}");
         }
     }
 }

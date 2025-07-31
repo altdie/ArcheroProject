@@ -29,13 +29,12 @@ namespace Project.Scripts.Players
         public int Level { get; set; }
         public bool IsAdsRemoved { get; set; }
         public int LastSave { get; set; }
-        public readonly int Speed = 5;
+        public readonly int Speed;
         private bool _isAttacking;
 
         public Health PlayerHealth { get; private set; }
         public Weapon<BowConfig> CurrentWeapon;
         public PlayerMovement PlayerMovement { get; }
-        private readonly Joystick _joystick;
         public event Action OnDeath;
         public event Action OnExperienceChanged;
         public event Action OnAttack;
@@ -43,13 +42,12 @@ namespace Project.Scripts.Players
         public event Action OnStopWalk;
 
         public PlayerModel(Health playerHealth, int speed, Weapon<BowConfig> currentWeapon, PlayerMovement playerMovement, 
-            Joystick joystick, int experience, int level, bool isAdsRemoved, int lastSave)
+            int experience, int level, bool isAdsRemoved, int lastSave)
         {
             PlayerHealth = playerHealth;
             Speed = speed;
             CurrentWeapon = currentWeapon;
             PlayerMovement = playerMovement;
-            _joystick = joystick;
             Experience = experience;
             Level = level;
             IsAdsRemoved = isAdsRemoved;
@@ -60,6 +58,12 @@ namespace Project.Scripts.Players
         {
             PlayerHealth.OnHealthChanged += OnHealthChanged;
         }
+        
+        public void UnsubscribeFromHealthChanged()
+        {
+            PlayerHealth.OnHealthChanged -= OnHealthChanged;
+        }
+
 
         private void Move()
         {

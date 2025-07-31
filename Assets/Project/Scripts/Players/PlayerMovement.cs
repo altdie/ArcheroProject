@@ -13,7 +13,7 @@ namespace Project.Scripts.Players
         [SerializeField] private LayerMask _enemyLayer;
         [SerializeField] private float _enemyDetectionRadius = 50f;
         [SerializeField] private Slider _healthBar;
-        private bool _isMoving = false;
+        private bool _isMoving;
 
         private PlayerInputHandler _inputHandler;
         private PlayerModel _player;

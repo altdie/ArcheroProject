@@ -8,7 +8,7 @@ namespace Project.Scripts.Animations.Enemy
 
         public EnemyAnimator(Animator animator)
         {
-            this._animator = animator;
+            _animator = animator;
         }
 
         public void PlayGetHit()

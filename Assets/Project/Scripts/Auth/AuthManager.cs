@@ -7,7 +7,7 @@ namespace Project.Scripts.Auth
 {
     public class AuthManager
     {
-        public async UniTask InitializeAsync()
+        public async UniTask Initialize()
         {
             try
             {

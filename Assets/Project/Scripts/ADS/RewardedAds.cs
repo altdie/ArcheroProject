@@ -9,16 +9,16 @@ namespace Project.Scripts.ADS
     public class RewardedAds : IUnityAdsLoadListener, IUnityAdsShowListener
     {
         private Action _onAdWatchedCallback;
-        private readonly string _androidAdUnitId = "Rewarded_Android";
-        private readonly string _iOSAdUnitId = "Rewarded_iOS";
+        private const string ANDROIND_AD_UNID_ID = "Rewarded_Android";
+        private const string IOS_AD_UNIT_ID = "Rewarded_iOS";
         private string _adUnitId;
         private PlayerPrefsSave _save;
 
         public void Initialize(PlayerPrefsSave save)
         {
             _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer)
-                ? _iOSAdUnitId
-                : _androidAdUnitId;
+                ? IOS_AD_UNIT_ID
+                : ANDROIND_AD_UNID_ID;
 
             _save = save;
         }

@@ -22,11 +22,17 @@ namespace Project.Scripts.Players
             _playerModel.OnStopWalk += _animator.StopWalk;
         }
 
-        private void Die()
+        private void UnsubscribeFromModel()
         {
+            _playerModel.OnDeath -= Die;
             _playerModel.OnAttack -= _animator.PlayAttack;
             _playerModel.OnWalk -= _animator.PlayWalk;
             _playerModel.OnStopWalk -= _animator.StopWalk;
+        }
+
+        private void Die()
+        {
+            UnsubscribeFromModel();
             Destroy(gameObject);
         }
     }

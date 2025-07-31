@@ -7,21 +7,21 @@ namespace Project.Scripts.Addressables
 {
     public class AssetProvider : IAssetProvider
     {
-        private const string PlayerPrefabAddress = "Player";
-        private const string PanelFreeGamePrefabAddress = "GameOverPanel";
-        private const string ButtonADSAddress = "ButtonADS";
-        private const string PanelEndGame = "PanelGameEnd";
+        private const string PLAYER_PREFAB_ADDRESS = "Player";
+        private const string PANEL_FREEGAME_PREFAB_ADRESS = "GameOverPanel";
+        private const string BUTTON_ADS_ADDRESS = "ButtonADS";
+        private const string PANEL_ENDGAME = "PanelGameEnd";
 
-        public async UniTask<GameObject> CreatePlayerPrefabAsync()
+        public async UniTask<GameObject> CreatePlayerPrefab()
         {
-            var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<GameObject>(PlayerPrefabAddress);
+            var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<GameObject>(PLAYER_PREFAB_ADDRESS);
             await handle.Task;
             return handle.Result;
         }
 
         public async UniTask<PanelView> CreatePanelPrefabFreeLifeAsync()
         {
-            var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PanelFreeGamePrefabAddress);
+            var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PANEL_FREEGAME_PREFAB_ADRESS);
             await handle.Task;
 
             var panelGO = handle.Result;
@@ -32,7 +32,7 @@ namespace Project.Scripts.Addressables
 
         public async UniTask<Button> CreateRewardAdsbAsync()
         {
-            var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<GameObject>(ButtonADSAddress);
+            var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<GameObject>(BUTTON_ADS_ADDRESS);
             await handle.Task;
 
             var prefab = handle.Result;
@@ -43,7 +43,7 @@ namespace Project.Scripts.Addressables
 
         public async UniTask<PanelView> CreatePanelPrefabEndGameAsync()
         {
-            var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PanelEndGame);
+            var handle = UnityEngine.AddressableAssets.Addressables.InstantiateAsync(PANEL_ENDGAME);
             await handle.Task;
 
             var panelGO = handle.Result;

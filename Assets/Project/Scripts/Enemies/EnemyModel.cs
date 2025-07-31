@@ -24,9 +24,7 @@ namespace Project.Scripts.Enemies
         public event Action OnDeath;
         private Action _onDeathCallback;
 
-        public EnemyModel(
-            EnemyConfig config,
-            Weapon<StoneCannonConfig> weapon,
+        public EnemyModel(Weapon<StoneCannonConfig> weapon,
             Health health,
             int exp,
             AudioManager audioManager,
@@ -40,8 +38,6 @@ namespace Project.Scripts.Enemies
             _audioManager = audioManager;
             _animator = animator;
             _coroutineRunner = coroutineRunner;
-
-            EnemyHealth.OnHealthChanged += OnHealthChanged;
         }
         
         public void SubscribeOnDeath(Action callback)
@@ -54,6 +50,16 @@ namespace Project.Scripts.Enemies
         {
             OnDeath -= _onDeathCallback;
             _onDeathCallback = null;
+        }
+
+        public void SubscribeToHealthChanged()
+        {
+            EnemyHealth.OnHealthChanged += OnHealthChanged;
+        }
+
+        public void UnsubscribeFromHealthChanged()
+        {
+            EnemyHealth.OnHealthChanged -= OnHealthChanged;
         }
 
         private void OnHealthChanged(float healthRatio)

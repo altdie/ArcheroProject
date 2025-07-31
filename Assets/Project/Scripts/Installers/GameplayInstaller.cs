@@ -56,6 +56,7 @@ namespace Project.Scripts.Installers
         {
             Container.Bind<BowConfig>().FromInstance(_bowConfig).AsSingle();
             Container.Bind<StoneCannonConfig>().FromInstance(_stoneCannonConfig).AsSingle();
+            Container.Bind<PlayerConfig>().AsSingle();
         }
 
         private void BindInstances()

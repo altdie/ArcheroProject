@@ -1,5 +1,4 @@
-﻿using System;
-using Project.Scripts.HealthInfo;
+﻿using Project.Scripts.HealthInfo;
 using Project.Scripts.VFX;
 using UnityEngine;
 using UnityEngine.UI;

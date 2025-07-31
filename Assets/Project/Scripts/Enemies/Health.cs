@@ -8,13 +8,11 @@ namespace Project.Scripts.HealthInfo
         public event Action<float> OnHealthChanged;
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
-        private readonly GameObject _entityObject;
 
-        public Health(float maxHealth, GameObject entityObject)
+        public Health(float maxHealth)
         {
             MaxHealth = maxHealth;
             CurrentHealth = maxHealth;
-            _entityObject = entityObject;
         }
 
         public void TakeDamage(float damage)

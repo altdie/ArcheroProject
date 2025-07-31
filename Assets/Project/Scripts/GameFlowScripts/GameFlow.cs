@@ -20,7 +20,7 @@ namespace Project.Scripts.GameFlowScripts
     public class GameFlow : IInitializable, IDisposable
     {
         private int _killsCount;
-        private bool _rewardAdsComplete = false;
+        private bool _rewardAdsComplete;
 
         private List<EnemyModel> _enemies;
         private PlayerModel _player;
@@ -43,6 +43,7 @@ namespace Project.Scripts.GameFlowScripts
         private readonly AdsService _adsService;
         private readonly AuthManager _authManager;
         private readonly AudioManager _audioManager;
+        private readonly PlayerConfig _playerConfig;
         private PlayerStatsUIPresenter _playerStatsUIPresenter;
         private PlayerStatsUIModel _playerStatsUIModel;
         private CancellationTokenSource _cts;
@@ -58,12 +59,12 @@ namespace Project.Scripts.GameFlowScripts
             SceneData sceneData,
             IAnalyticsService analyticsService,
             AdsInitializer adsInitializer,
-            InterstitialAds interstitialAdExample,
             TimeService timeService,
             SaveSelection saveSelection,
             PanelFactory panelFactory,
             IDoorView doorView, PlayerStatsUIView playerStatsUIView,
-            SceneLoader sceneLoader, AdsService adsService, PlayerPrefsSave playerPrefsSave, AuthManager authManager, AudioManager audioManager)
+            SceneLoader sceneLoader, AdsService adsService, PlayerPrefsSave playerPrefsSave, 
+            AuthManager authManager, AudioManager audioManager, PlayerConfig playerConfig)
         {
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
@@ -83,16 +84,17 @@ namespace Project.Scripts.GameFlowScripts
             _playerPrefsSave = playerPrefsSave;
             _authManager = authManager;
             _audioManager = audioManager;
+            _playerConfig = playerConfig;
         }
         
         public void Initialize()
         {
-            InitializeAsyncGlobal().Forget();
+            InitializeGameFlow().Forget();
         }
 
-        private async UniTask  InitializeAsyncGlobal()
+        private async UniTask  InitializeGameFlow()
         {
-            await InitializeAsync();
+            await InitializeCoreSystems();
             _adsInitializer.InitializeAds();
             _adsService.LoadInterstitialAd();
             _adsService.LoadRewardedAd();
@@ -101,10 +103,10 @@ namespace Project.Scripts.GameFlowScripts
             _audioManager.PlayBackgroundMusic();
         }
 
-        private async UniTask InitializeAsync()
+        private async UniTask InitializeCoreSystems()
         {
             CreateCancellationToken();
-            _player = await _playerFactory.CreatePlayerAsync(_spawnPointPlayer, 100, _joystick);
+            _player = await _playerFactory.CreatePlayer(_spawnPointPlayer, _playerConfig.PlayerInitialHealth, _joystick);
             _enemyFactory.CreateEnemies(_enemySpawnData);
 
             foreach (var enemy in _enemyFactory.Enemies)
@@ -118,17 +120,17 @@ namespace Project.Scripts.GameFlowScripts
             _playerStatsUIPresenter.Initialize();
             _player.OnDeath += OnPlayerDeath;
 
-            var authTask = _authManager.InitializeAsync();
-            var loadDataTask = LoadPlayerDataAsync(_token);
-            var saveInitTask = _saveSelection.InitializeAsync();
+            var authTask = _authManager.Initialize();
+            var loadDataTask = LoadPlayerData(_token);
+            var saveInitTask = _saveSelection.Initialize();
             
             await UniTask.WhenAll(authTask, loadDataTask, saveInitTask);
         }
 
-        private async UniTask LoadPlayerDataAsync(CancellationToken token)
+        private async UniTask LoadPlayerData(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            PlayerDataSave savedData = await _saveSelection.LoadAsync(token);
+            PlayerDataSave savedData = await _saveSelection.Load(token);
             token.ThrowIfCancellationRequested();
             _player.Experience = savedData.Experience;
             _player.IsAdsRemoved = savedData.IsAdsRemoved;
@@ -137,10 +139,11 @@ namespace Project.Scripts.GameFlowScripts
         private async UniTaskVoid RemoveEnemy(EnemyModel enemy)
         {
             enemy.UnsubscribeFromDeath();
+            enemy.UnsubscribeFromHealthChanged();
             _enemies.Remove(enemy);
             _player.PlayerMovement.AddExperience(enemy.EXP);
 
-            await _saveSelection.SaveAsync(_player);
+            await _saveSelection.Save(_player);
             _killsCount++;
 
             if (_enemies.Count == 0)
@@ -173,7 +176,7 @@ namespace Project.Scripts.GameFlowScripts
 
                 case true:                  
                     await ClearData(_token);
-                    await LoadPlayerDataAsync(_token);
+                    await LoadPlayerData(_token);
                     LogDeathAnalytics();
 
                     PanelView panelEndGame = await _panelFactory.CreatePanelEndGame(_token);
@@ -190,11 +193,11 @@ namespace Project.Scripts.GameFlowScripts
             _ = RemovePlayer();
         }
 
-        public async UniTask RevivePlayer()
+        private async UniTask RevivePlayer()
         {
             _rewardAdsComplete = true;
             _playerPrefsSave.Load();
-            _player = await _playerFactory.CreatePlayerAsync(_spawnPointPlayer, 100, _joystick);
+            _player = await _playerFactory.CreatePlayer(_spawnPointPlayer, _playerConfig.PlayerInitialHealth, _joystick);
             _player.OnDeath += OnPlayerDeath;
             _panelFactory.DestroyPanel();
             _timeService.ResumeAttack();
@@ -206,12 +209,12 @@ namespace Project.Scripts.GameFlowScripts
             _playerStatsUIPresenter.UpdateView();
 
             _analyticsService.LogLevelPassed(_player.Level);
-            _ = _saveSelection.SaveAsync(_player);
+            _ = _saveSelection.Save(_player);
         }
 
-        public async UniTask ClearData(CancellationToken token)
+        private async UniTask ClearData(CancellationToken token)
         {
-            await _saveSelection.ClearAsync(token);
+            await _saveSelection.Clear(token);
         }
 
         private void LogDeathAnalytics()
@@ -228,6 +231,7 @@ namespace Project.Scripts.GameFlowScripts
         public void Dispose()
         {
             _player.OnDeath -= OnPlayerDeath;
+            _player.UnsubscribeFromHealthChanged();
             _cts?.Cancel();
             _cts?.Dispose();
         }

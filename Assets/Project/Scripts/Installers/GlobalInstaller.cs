@@ -19,7 +19,7 @@ namespace Project.Scripts.Installers
         public override void Start()
         {
             var authManager = Container.Resolve<AuthManager>();
-            _ = authManager.InitializeAsync();
+            _ = authManager.Initialize();
         }
     }
 }

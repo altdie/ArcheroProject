@@ -16,18 +16,18 @@ namespace Project.Scripts.SaveSystem
             _cloudSave = cloudSave;
         }
 
-        public async UniTask InitializeAsync()
+        public async UniTask Initialize()
         {
             await UnityServices.InitializeAsync();
         }
 
-        public async UniTask SaveAsync(PlayerModel data)
+        public async UniTask Save(PlayerModel data)
         {
             await _cloudSave.SaveToCloud(data);
             _localSave.Save(data);
         }
 
-        public async UniTask<PlayerDataSave> LoadAsync(CancellationToken token)
+        public async UniTask<PlayerDataSave> Load(CancellationToken token)
         {
             var localData = _localSave.Load();
             var cloudData = await _cloudSave.LoadFromCloud();
@@ -42,7 +42,7 @@ namespace Project.Scripts.SaveSystem
             return localData;
         }
 
-        public async UniTask ClearAsync(CancellationToken token)
+        public async UniTask Clear(CancellationToken token)
         {
             await _cloudSave.ClearCloudSave();
             token.ThrowIfCancellationRequested();
