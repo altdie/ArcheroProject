@@ -34,7 +34,7 @@ namespace Project.Scripts.GameFlowScripts
             AuthManager authManager,
             AudioManager audioManager,
             PlayerLifecycle playerLifecycle,
-            EnemyLifecycleManager enemyLifecycleManager)
+            EnemyLifecycleManager enemyLifecycleManager, UIFlow uiFlow)
         {
             _analyticsService = analyticsService;
             _adsInitializer = adsInitializer;
@@ -45,6 +45,7 @@ namespace Project.Scripts.GameFlowScripts
             _audioManager = audioManager;
             _playerLifecycle = playerLifecycle;
             _enemyLifecycleManager = enemyLifecycleManager;
+            _uiFlow = uiFlow;
         }
 
         public void Initialize()
